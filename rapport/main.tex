@@ -1,0 +1,213 @@
+\documentclass[a4paper, 12pt]{book}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[margin=1in]{geometry}
+
+% allow breaking into separate files
+\usepackage{subfiles}
+
+% allow to change appearance of enumerator
+\usepackage{enumerate}
+
+% allow \mathbb{}
+\usepackage{amssymb, bm}
+
+% allow matrices and so many more cool stuff ; basic
+\usepackage{amsmath, amssymb, amsthm, amscd, latexsym}
+
+% lettres rondes
+\usepackage{calrsfs}
+
+% fonctions indicatrices
+\usepackage{dsfont}
+
+% big integrals
+\usepackage{bigints}
+
+% set quotient
+\usepackage{xfrac}
+
+% force greek letters to comply to international standards
+\usepackage{fixmath}
+
+% personnaliser les énumérations
+\usepackage{enumitem}
+\setitemize[1]{label=\textbullet, font=\color{blue}}
+
+\usepackage{xcolor}
+\definecolor{blue}{RGB}{31,79,255}
+
+% La meilleure police d'écriture en termes de lisibilité
+\usepackage{ae, lmodern}
+
+% caption dans les figures
+\usepackage{graphicx}
+
+% To make \( ... \) robust
+\usepackage{fixltx2e}
+
+% Make links
+\usepackage{hyperref}
+
+% floating figures with figure[H]
+\usepackage{float}
+
+\usepackage[most]{tcolorbox}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+
+\newcommand\restr[2]{{% we make the whole thing an ordinary symbol
+		\left.\kern-\nulldelimiterspace % automatically resize the bar with \right
+		#1 % the function
+		%\vphantom{\big|} % pretend it's a little taller at normal size
+		\right|_{#2} % this is the delimiter
+}}
+
+\newcommand{\psum}[1]{\sum\limits_{#1}}
+\newcommand{\pmax}[1]{\max\limits_{#1}}
+
+\newcommand{\cfigure}[3][6cm]{
+	\begin{figure}[!htbp]
+		\centering
+		\includegraphics[height=#1]{#2}
+		\caption{#3}
+	\end{figure}
+}
+
+% set a black square as end of proof symbol and change proofs default name
+\renewcommand\qedsymbol{$\blacksquare$}
+\renewcommand{\proofname}{Proof}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{_lemma}{Lemma}
+\newtheorem{_cor}{Corollary}
+\newtheorem{_def}{Definition}
+\newtheorem{remark}{Remark}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{prop}{Prop.}
+
+\newtcolorbox{thm}[2][bicolor]{
+	colbacktitle=red!25!yellow!50!white, % couleur de fond de la boite de titre
+	colback=red!20!,
+	colbacklower=white,
+	%collower=red!75!black,  % couleur du texte de la boite inf
+	attach boxed title to top center={yshift=-2mm},
+	title=#2,#1,
+	before upper=\begin{theorem},
+		after upper=\end{theorem},
+}
+
+\newtcolorbox{lemma}[2][bicolor]{
+	colbacktitle=red!25!yellow!50!white, % couleur de fond de la boite de titre,
+	colback=blue!15!,
+	colbacklower=white,
+	%collower=red!75!black,  % couleur du texte de la boite inf
+	attach boxed title to top center={yshift=-2mm},
+	title=#2,#1,
+	before upper=\begin{_lemma},
+		after upper=\end{_lemma},
+}
+
+\newtcolorbox{cor}[2][]{
+	colbacktitle=red!25!yellow!50!white, % couleur de fond de la boite de titre
+	%collower=red!75!black,  % couleur du texte de la boite inf
+	attach boxed title to top center={yshift=-2mm},
+	title=#2,#1,
+	before upper=\begin{_cor},
+		after upper=\end{_cor},
+}
+
+\newtcolorbox{definition}[2][]{
+	colbacktitle=red!25!white, % couleur de fond de la boite de titre
+	%collower=red!75!black,  % couleur du texte de la boite inf
+	attach boxed title to top left={yshift=-2mm},
+	title=#2,#1,
+	before upper=\begin{_def},
+		after upper=\end{_def},
+	before lower={},
+	after lower={}
+}
+
+\tcbset{
+	before lower={\begin{proof}},
+		after lower={\end{proof}},
+	colback=white,
+	colbacklower=white,
+	enhanced, % make a title,
+	coltitle=black, % title text color
+}
+
+\newcounter{exmpl}
+\usepackage{xparse} % useful ?
+\def\exampletext{Example} % useful ?
+\NewDocumentEnvironment{exmpl}{O{}}
+{
+	\colorlet{colexam}{red!55!black} % Global example color
+	\newtcolorbox[use counter=exmpl]{exmplbox}{%
+		% Example Frame Start
+		empty,% Empty previously set parameters
+		title={\exampletext: #1},% use \thetcbcounter to access the testexample counter text
+		% Attaching a box requires an overlay
+		attach boxed title to top left,
+		% Ensures proper line breaking \in longer titles
+		minipage boxed title,
+		% (boxed title style requires an overlay)
+		boxed title style={empty,size=minimal,toprule=0pt,top=4pt,left=3mm,overlay={}},
+		coltitle=colexam,fonttitle=\bfseries,
+		before=\par\medskip\noindent,parbox=false,boxsep=0pt,left=3mm,right=0mm,top=2pt,breakable,pad at break=0mm,
+		before upper=\csname @totalleftmargin\endcsname0pt, % Use instead of parbox=true. This ensures parskip is inherited by box.
+		% Handles box when it exists on one page only
+		overlay unbroken={\draw[colexam,line width=.5pt] ([xshift=-0pt]title.north west) -- ([xshift=-0pt]frame.south west); },
+		% Handles multipage box: first page
+		overlay first={\draw[colexam,line width=.5pt] ([xshift=-0pt]title.north west) -- ([xshift=-0pt]frame.south west); },
+		% Handles multipage box: middle page
+		overlay middle={\draw[colexam,line width=.5pt] ([xshift=-0pt]frame.north west) -- ([xshift=-0pt]frame.south west); },
+		% Handles multipage box: last page
+		overlay last={\draw[colexam,line width=.5pt] ([xshift=-0pt]frame.north west) -- ([xshift=-0pt]frame.south west); },%
+	}
+	\begin{exmplbox}}
+	{\end{exmplbox}\endlist}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\usepackage{datetime}
+
+\newdateformat{monthyeardate}{%
+	\monthname[\THEMONTH], \THEYEAR}
+
+% remove unwanted indent after first lign of paragraphs
+\setlength{\parindent}{0in}
+
+\linespread{1.125}
+\selectfont
+
+\newcommand{\func}[5]{\begin{array}{l|rcl}
+		#1: & #2 & \longrightarrow & #3 \\
+		& #4 & \longmapsto & #5 \end{array}}
+
+
+\lhead{lip6 - 2020}
+\chead{Automatic asymptotic for combinatorial series}
+\rhead{Sébastien Julliot}
+
+
+\author{JULLIOT Sébastien}
+
+\date{2020}
+
+\title{Master thesis -	Supervised by Marc MEZZAROBBA}
+
+
+\begin{document}
+
+\subfile{sections/title_page}
+\tableofcontents
+%\subfile{sections/introduction}
+
+\end{document}
