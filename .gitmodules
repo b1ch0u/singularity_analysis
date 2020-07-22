@@ -1,0 +1,3 @@
+[submodule "ore_algebra"]
+	path = ore_algebra
+	url = git@github.com:b1ch0u/ore_algebra.git
