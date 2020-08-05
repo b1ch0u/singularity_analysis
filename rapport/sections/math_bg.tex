@@ -1,0 +1,243 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\chapter{Mathematical background}
+
+\section{Reminders from complex analysis}
+
+TODO
+
+%\section{D-finiteness and P-recursiveness}
+%
+%\begin{definition}{P-recursiveness}
+%	Let ${(u_n)}_n$ a sequence of complex numbers.
+%	
+%	We say ${(a_n)}$ is \emph{P-recursive} if there exist $p_0, \dots, p_r \in \mathbb{C}[X]$ such that for all $n$,
+%	$$
+%	p_r(n) a_{n + r} + \dots + p_0(n) a_n = 0
+%	$$
+%\end{definition}
+%
+%\begin{thm}{A series is D-finite iif its coefficients sequence is P-recursive}
+%	Let $g = \sum c_n z^n$ a formal sum. Then $g$ is D-finite if and only if ${(c_n)}$ is P-recursive.
+%	
+%	\tcblower
+%	
+%	TODO
+%\end{thm}
+%
+%% TODO : Parler d'algèbres de Ore ?
+
+\section{Singularities location}
+
+%Let $g = \sum g_n z^n$ a formal sum.
+%
+%Then $g$ is solution of equation \ref{basic_eq_diff} if and only if its coefficients satisfy
+%\begin{equation}
+%p_r(z) \psum{n} g_{n + r} \frac{(n + r)!}{n!} z^n + \dots + p_0(z) \psum{n} g_n z^n = 0
+%\end{equation}
+%
+%which is again equivalent to
+%
+%\begin{equation}
+%\psum{n} \left[ p_r(z) g_{n + r} \frac{(n + r)!}{n!} + \dots + p_0(z) g_n \right] z^n = 0
+%\end{equation}
+%
+%Let $c_{i, j}$ the coefficient of $p_i$ in $(X^j)$ and $d_i$ the degree of $p_i$.
+%
+%Then again, $g$ is solution of \ref{basic_eq_diff} if and only if
+%\begin{equation}
+%\left( \psum{j} c_{r, j} z^j \right) \psum{n} g_{n + r} \frac{(n + r)!}{n!} z^n
+%+ \dots
+%+ \left( \psum{j} c_{0, j} z^j \right) \psum{n} g_n z^n
+%= 0
+%\end{equation}
+%
+%Thus, $g$
+%
+%\begin{equation}
+%\psum{n} \left[ \psum{j + k = n} c_{r, j} g_{k + r} \frac{(k + r)!}{k!} \right] z^n
+%+ \dots
+%+ \psum{n} \left[ \psum{j + k = n} c_{0, j} g_{k} \right] z^n
+%= 0
+%\end{equation}
+
+
+\begin{thm}{Existence of a local basis of solutions}
+	% TODO ref Wasow inaccessible
+	
+	Let $z_0 \in \mathbb{C}$ such that $p_r (z_0) \neq 0$.
+	
+	Then, in some neighbourhood of $z_0$, equation \ref{basic_eq_diff}
+	admits a basis of $r$ analytic solutions.
+	
+	\tcblower
+	
+	We will show that a formal solution a uniquely defined by initial values of $f_i$. Then, that the thereby defined formal sum is analytic in some neighbourhood of $z_0$.
+	
+	\begin{center}
+		***
+	\end{center}
+
+	Let $g = \sum g_n z^n \in \mathbb{C}[[X]]$.
+	
+	Then $g$ is solution of equation \ref{basic_eq_diff} if and only if its coefficients satisfy
+	\begin{equation*}
+	p_r(z) \psum{n} \frac{(n + r)!}{n!} g_{n + r} z^n + \dots + p_0(z) \psum{n} g_n z^n = 0
+	\end{equation*}
+	
+	which is again equivalent to
+	
+	\begin{equation*}
+	\psum{n} \left[ p_r(z) \frac{(n + r)!}{n!} g_{n + r} + \dots + p_0(z) g_n \right] z^n = 0
+	\end{equation*}
+	
+	Now, by formal sum equality, we get a necessary and sufficient condition :
+	
+	\begin{equation}\label{rec_relation}
+		\forall n, p_r(z_0) \frac{(n + r)!}{n!} g_{n + r} + \dots + p_0(z_0) g_n = 0
+	\end{equation}
+	
+	Assuming $p_r(z_0) \neq 0$, a formal solution is therefore determined by its $r$ first coefficients, and we get a basis of $r$ formal solutions.
+	
+	\begin{center}
+		***
+	\end{center}
+	
+	Let $C_0 := \max\limits_{k \in [0, r - 1]} |g_k|$ and $M := \max \left| \frac{p_k(z_0)}{p_r(z_0)} \right|$.
+
+	By equation \ref{rec_relation} and triangle inequality, one gets
+	\begin{equation*}
+		|g_r| \leq MrC_0
+	\end{equation*}
+	An immediate recurrence then yields $|g_{n + r}| \leq C_0 {(Mr)}^n$ for all $n$.
+	
+	So any formal solution's coefficients have at most exponential growth ; it follows that any formal solution is actually analytic in some neighbourhood of $z_0$.
+\end{thm}
+
+\begin{cor}{Possible locations of singularities}\label{cor_sing_location}
+	The only points where $f$ \emph{may} admit singularities are the zeros of $p_r$.
+\end{cor}
+
+
+\section{Structure theorems}
+
+For further treatment of this section, one is referred to \cite{Wasow1965} (chapter II in particular).
+
+\subsection{Transformation into a matrix system}
+
+Recall equation \ref{basic_eq_diff} :
+
+\begin{equation*}
+	u^{(r)} + \frac{p_{r-1}}{p_r} u^{(r - 1)} + \dots + \frac{p_0}{p_r} u = 0
+\end{equation*}
+
+Let us rename $a_i = \frac{p_i}{p_r}$.
+Now define $Y : z \mapsto \begin{pmatrix}
+u\\
+x u'\\
+\vdots \\
+x^{r - 1} u^{(n - 1)}
+\end{pmatrix}$ (that is, $y_i = x^{i - 1} u^{(i - 1)}$).\\
+
+It is immediate that for all $i \leq r - 1$, we have $$z y_i' = (j-1)y_j + y_{j + 1}$$ and
+$$ z y_r' = (r - 1)y_r - z a_{r-1} y_{r - 1} - \dots - z^r a_0 y_1 $$
+
+Then, equation \ref{basic_eq_diff} is easily seen to be equivalent to
+
+\begin{equation}\label{eq_diff_matrix_form}
+zY' = A(z)Y
+\end{equation}
+
+where $A(z)$ is an $r \times r$ matrix.
+
+\subsection{Regular singular points and indicial polynomials}
+
+
+\begin{definition}{Regular singular points and Fuchsian condition}
+	Let $f : z \mapsto \sum a_n z^n$ solution to \ref{basic_eq_diff}.
+	
+	We say $\zeta$ is a \emph{regular singular} point of $f$ if $\zeta$ is a pole of $\frac{p_i}{p_r}$ of order at most $r - i$, for all $i \in [0, r - 1]$.\\
+	
+	Equivalently, $\zeta$ is a regular singular point if $A(z)$ is analytic in some neighbourhood of $\zeta$, when one writes $(z - \zeta)Y' = A(z) Y$.\\
+	
+	A linear differential equation with only regular singular points is called \emph{Fuchsian}.
+\end{definition}
+
+\begin{definition}{{Indicial polynomial, $I_\zeta$}}
+	The characteristic polynomial of $A(\zeta)$ is named the \emph{indicial polynomial} of equation \ref{basic_eq_diff} and \ref{eq_diff_matrix_form} at $\zeta$, written $I_\zeta$.
+\end{definition}
+
+%Before defining indicial polynomials in all generality, let us begin with a simple example, allowing one to get a grasp at where the definition comes from.
+%
+%\begin{exmpl}
+%	Suppose we want to study
+%	\begin{equation}\label{eqn_rd_walks_quarter_plane}
+%	y^{(3)}
+%	+ \frac{128 z^2 + 8 z - 6}{z (16 z^2 - 1)} y''
+%	+ \frac{224 z^2 + 28 z - 6}{z^2 (16 z^2 - 1)} y'
+%	+ \frac{64 z + 12}{z^2 (16 z^2 - 1)} y = 0
+%	\end{equation}
+%	
+%	(For the interested reader, this equation is satisfied by the series counting the number of random walks in $\mathbb{N}^2$ with steps $(-1, 0), (1, 0), (0, -1), (0, 1)$).\\
+%	
+%	By corollary \ref{cor_sing_location}, a solution of equation \ref{eqn_rd_walks_quarter_plane} may only admit singularities at $z = 0$ and $z = \pm \frac{1}{4}$.
+%	One can see that 0 and $\pm \frac{1}{4}$ are regular singular points. \\
+%	
+%	Let us look for a solution of the form $y : z \mapsto z^\theta + o(z^\theta)$ around 0.
+%	
+%	Since $y^{(i)} : z \mapsto \theta (\theta - 1) \dots (\theta - i + 1) z^{\theta - i}$, one gets the equation
+%	
+%	\begin{align*}
+%	z^2 (16 z^2 - 1) \theta (\theta - 1) (\theta - 2) z^{\theta - 3}\\
+%	+ z(128 z^2 + 8 z - 6) \theta (\theta - 1) z^{\theta - 2}\\
+%	+ (224 z^2 + 28 z - 6) \theta z^{\theta - 1}\\
+%	+ (64 z + 12) z^\theta = 0
+%	\end{align*}
+%	
+%	which can be rearranged
+%	
+%	\begin{align*}
+%	\theta (\theta - 1) (\theta - 2) z^{\theta - 1}\\
+%	+ (128 z^2 + 8 z - 6) \theta (\theta - 1) z^{\theta - 1}\\
+%	+ (224 z^2 + 28 z - 6) \theta z^{\theta - 1}\\
+%	+ (64 z + 12) z^\theta = 0
+%	\end{align*}
+%\end{exmpl}
+
+\subsection{Results}
+
+\begin{thm}{Structure theorem without congruent roots}
+	Let $\zeta$ be a singular regular point of \ref{basic_eq_diff}. Suppose $I_\zeta$ is such that no two roots differ by an integer (in particular, all roots are distinct).
+	
+	Then, in a slit neighbourhood of $\zeta$, there exists a basis of solutions with functions of the form
+	\begin{equation}
+	{(z - \zeta)}^{\theta_j} H_j (z - \zeta)
+	\end{equation}
+	where $\theta_j$ are the roots of the indicial polynomial and each $H_j$ is analytic at 0.
+\end{thm}
+
+
+\begin{thm}{General structure theorem}
+	Let $\zeta$ be a singular regular point of \ref{basic_eq_diff}. No assumption is made on the roots of $I_\zeta$.
+	
+	Then, in a slit neighbourhood of $\zeta$, there exists a basis of solutions with functions of the form
+	\begin{equation}\label{general_structure_form}
+	{(z - \zeta)}^{\theta_j} \log^m (z - \zeta) H_j (z - \zeta)
+	\end{equation}
+	where $\theta_j$ are the roots of the indicial polynomial, each $H_j$ is analytic at 0, and $m$ is an integer. 
+\end{thm}
+
+\section{Transfer theorems}
+
+\begin{thm}{Main transfer theorem}
+	Let $f = \sum f_n z^n$ analytic in some open disk around the origin except for a single dominant singularity $\zeta$ and points in the ray	$R_\zeta = \{t \zeta : t \geq 1 \}$.\\
+	
+	If $f$ has a convergent expansion of the form \ref{general_structure_form} in a disk centred at $\zeta$ minus $R_\zeta$ and $f(z) \sim C {\left( 1 - \frac{z}{\zeta} \right)}^\alpha \log^m \left( 1 - \frac{z}{\zeta} \right)$ with $\alpha \not\in \mathbb{N}$,	
+	then
+	
+	$$f_n \sim C {\zeta}^{-n} \frac{n^{-\alpha - 1}}{\Gamma(-\alpha)} \log^m (n)$$
+\end{thm}
+
+\end{document}

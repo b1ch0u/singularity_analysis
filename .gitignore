@@ -3,4 +3,9 @@
 *.out
 *.gz
 *.toc
+*.bbl
+*.bcf
+*.blg
+*.xml
+*.pdf
 .ipynb_checkpoints/
