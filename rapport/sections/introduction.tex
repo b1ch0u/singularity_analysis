@@ -5,12 +5,12 @@
 \chapter{Introduction}
 
 
-Pick your favourite combinatorial construction. Let $a_n$ the number of such structures of size $n$. We wish to be able to compute an asymptotic expansion of $a_n$ automatically.\\
+Pick your favourite combinatorial construction. Let $a_n$ the number of such structures of size $n$. We wish to be able to compute an asymptotic expansion of $a_n$ automatically.
 
-Let $f = \sum a_n z^n$ the complex series associated to $(a_n)$.
+Let $f = \sum a_n z^n$ be the complex series associated to $(a_n)$.
 
-We shall see that, if $f$ has at least one singularity, then asymptotically $a_n = A^n \theta(n)$ where $\theta$ has sub-exponential growth.
-Furthermore, two principles shall guide one's search :
+We shall see that, if $f$ has a positive convergence radius, then one has asymptotically $a_n = A^n \theta(n)$ where $\theta$ has sub-exponential growth.
+Two principles, stated in \cite{Flajolet2009}, shall guide one's search :
 
 \begin{itemize}
 	\item	\emph{First Principle of Coefficient Asymptotics} : The location of a function’s
@@ -26,9 +26,9 @@ Furthermore, two principles shall guide one's search :
 
 \paragraph{From a combinatorial problem to a differential equation}
 Powerful techniques exist to translate a combinatorial construction into a \emph{D-finite} relation, namely a differential equation with polynomial coefficients.
-We will not cover those techniques here. If interested, one is referred to \cite{Flajolet2009}.\\
+We will not cover those techniques here. If interested, one is referred to \cite{Flajolet2009}.
 
-From now on, we will assume that a D-finite relation satisfied by $f$ is given, which is 
+From now on, we will assume that a non trivial D-finite relation satisfied by $f$ is given, which is 
 \begin{equation}\label{basic_eq_diff}
 y^{(r)} + \frac{p_{r-1}}{p_r} y^{(r - 1)} + \dots + \frac{p_0}{p_r} y = 0
 \end{equation}
@@ -38,10 +38,10 @@ where $p_0, \dots, p_r \in \mathbb{C}[X]$.
 We will first see that $f$ may only have singularities at roots of $p_r$. Thereafter, we define $\Xi := \{ \text{roots of } p_r\}$. If $f$ has at least one singularity, minimal ones (by module) are called \emph{dominant singularities}.
 
 \paragraph*{Local basis structure theorems}
-Following the definition of \emph{regular singular points}, where some technical condition is satisfied, we prove that, in a \emph{slit} neighbourhood of any such point $\zeta$, equation \ref{basic_eq_diff} admits a local basis of solutions of the form $${(z - \zeta)}^{\theta_j} \log^m (z - \zeta) H_j (z - \zeta)$$ with $H_j$ analytic at 0. This basis can be explicitly computed. 
+Following the definition of \emph{regular singular points}, where some technical condition is satisfied, we prove that, in a \emph{slit} neighbourhood of any such point $\zeta$, equation \eqref{basic_eq_diff} admits a local basis of solutions of the form $${(z - \zeta)}^{\theta_j} \log^m (z - \zeta) H_j (z - \zeta)$$ with $H_j$ analytic at 0. This basis can be explicitly computed. 
 
 \paragraph*{Transfer theorems}
-We then investigate \emph{transfer theorems}. Assume $f$ has at least one singularity, and  all dominant singularities are regular singular points. After expressing $f$ in the previous form around all dominant singularities, transfer theorems allow to compute an asymptotic expansion $f_n$.
+We then investigate \emph{transfer theorems}. Assume $f$ has at least one singularity, and  all dominant singularities are regular singular points. After expressing $f$ in the previous form around all dominant singularities, transfer theorems allow one to compute an asymptotic expansion of $f_n$.
 
 
 \section{Implementation overview}

@@ -1,0 +1,86 @@
+\documentclass[../main.tex]{subfiles}
+
+\begin{document}
+
+\section{Some differential equations theory}
+
+\subsection{Scalar and system equations}
+
+\paragraph{Scalar equations}
+
+The equation
+\begin{equation}\label{scalar_eq}
+	y^{(r)} = a_{r - 1}(z) y^{(r - 1)} + \dots + a_0(r) y
+\end{equation}
+where the $a_i$ are holomorphic is said to be a \emph{scalar} (differential) equation.
+
+\paragraph{System equations}
+
+The equation
+\begin{equation}\label{system_eq}
+	Y' = A(z) Y
+\end{equation}
+where $A(z)$ is an $n \times n$ matrix and $Y(z)$ is an $n$-dimensional vector
+is said to be a \emph{system} (differential) equation.
+
+\paragraph{From scalar to system}
+
+The following transformation is a classical trick to transform a scalar equation into a system one:
+
+If $y$ is a solution to 
+\begin{equation*}\label{scalar_eqn}
+	y^{(r)} = a_{r - 1}(z) y^{(r - 1)} + \dots + a_0(z) y
+\end{equation*}
+then
+$Y : z \mapsto \begin{pmatrix}
+y\\
+y'\\
+\vdots \\
+y^{(n - 1)}
+\end{pmatrix}$
+is a solution to
+\begin{equation*}
+	Y' = A(z)Y
+\end{equation*} where
+\begin{equation*}
+A(z)=
+\begin{pmatrix}
+0&1&&&\\
+ &0&1&\mbox{\Huge 0}\\
+ \mbox{\Huge 0}& &\ddots ~ \ddots\\
+a_0(z) & & \dots & a_{r - 1}(z)
+\end{pmatrix}
+\end{equation*}
+We call $A$ the \emph{companion matrix} of equation \eqref{scalar_eqn}.
+
+\subsection{Solutions space}
+
+\paragraph{Basis of solutions}
+
+The following classical theorem is admitted.
+
+\begin{thm}{Cauchy's existence and uniqueness theorem}\label{thm_cauchy}
+	Let $n$ an integer. Let also $A(z)$ an $n \times n$-matrix and $f(z)$ an $n$-dimensional vector, both holomorphic in some simply connected region $\Omega \subset \mathbb{C}$.
+	
+	Then the equation
+	\begin{equation}\label{inhom_system_eq}
+	Y' = A(z) Y + f(z)
+	\end{equation}
+	has a unique solution such that
+	\begin{equation*}
+		y(z_0) = y_0
+	\end{equation*}
+	where $z_0 \in \Omega$ and $y_0 \in \mathbb{C}^n$.
+	
+	That solution is holomorphic on $\Omega$.
+\end{thm}
+
+It immediately follows
+
+\begin{cor}{Basis of solutions for systems}
+	Let $z_0 \in \mathbb{C}$. Suppose there exists a neighbourhood $\Omega$ of $z_0$ such that $A$ and $f$ are holomorphic on $\Omega$.
+	
+	Then the set of solutions to equation \eqref{inhom_system_eq} defined in $z_0$ forms an $n$-dimensional vector space. 
+\end{cor}
+
+\end{document}

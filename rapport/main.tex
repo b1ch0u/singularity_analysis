@@ -191,6 +191,8 @@ sorting=ynt]{biblatex}
 
 % remove unwanted indent after first lign of paragraphs
 \setlength{\parindent}{0in}
+% add an extra line between paragraphs
+%\setlength{\parskip}{1em}
 
 \linespread{1.125}
 \selectfont
@@ -226,17 +228,17 @@ sorting=ynt]{biblatex}
 \begin{center}
 	\begin{minipage}{.8\textwidth}
 		\begin{center}{\section*{Abstract}}\end{center}
-		Enumerative combinatorics is interested in determining the number $a_n$ of objects of size $n$ in a class of combinatorial objects. Alternatively, one would like to obtain an asymptotic expansion of $a_n$. In algorithms analysis, computing asymptotic expansions is used to compare performances, and therefore also a salient question.\\
-		
-		Due to the fabulous diversity of combinatorial structures, such computations have long required intuition and specially crafted "tricks", only adapted to the problem at hand, or some close family.\\
-		
-		Nowadays, powerful techniques have been developed, that are able to enumerate precisely or compute an asymptotic expansion of a vast amount of combinatorial constructions. In fact, such generality has been attained that most of the steps involved may now be carried out automatically in seconds by any modern computer.\\
-		
-		One very general case of application of these techniques is the \textit{D-Finite} case.\\
-		
-		This internship is devoted to understanding and effectively programming a complete combination of these techniques in \textit{SageMath}, in the D-Finite case, relying in particular on the \verb|ore_algebra| module.\\
-		
-		In the end, one should be able to type in a D-finite relation associated to $a_n$, and our code shall return an asymptotic expansion of $a_n$, up to any desired order.
+		Enumerative combinatorics is interested in determining the number $a_n$ of objects of size $n$ in a class of combinatorial objects. Alternatively, one would like to obtain an asymptotic expansion of $a_n$. In analysis of algorithms, computing asymptotic expansions is used to compare performance, and therefore also a salient question.
+
+		Due to the fabulous diversity of combinatorial structures, such computations have long required intuition and specially crafted ``tricks'', only adapted to the problem at hand, or some close family.
+
+		Nowadays, powerful techniques have been developed, enabling one to study a vast amount of combinatorial constructions with standard procedures. In fact, most of the steps involved have now been implemented, for instance in the \verb|ore_algebra| module of \textit{SageMath}.
+
+		One very general case of application of these techniques is the \textit{D-Finite} case.
+
+		This internship is devoted to understanding and effectively programming a complete combination of these techniques in \textit{SageMath}, in the D-Finite case.
+
+		In the end, one should be able to type in a differential equation associated to $a_n$, and our code shall return an asymptotic expansion of $a_n$, up to any desired order.
 	\end{minipage}
 \end{center}
 \vfill % equivalent to \vspace{\fill}
