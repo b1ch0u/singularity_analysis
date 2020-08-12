@@ -4,7 +4,30 @@
 
 \chapter{Mathematical background}
 
+\section{Notations}
+
+\begin{definition}{}
+	Let $f$ be a differentiable function. We note $f^{(k)}$ its $k$-th derivative.
+\end{definition}
+
 \section{Reminders from complex analysis}
+
+\begin{thm}{Leibniz rule}\label{Leibniz_rule}
+	\[
+	{(fg)}^{(n)} = \psum{i=0}^{n} {n \choose i} f^{(n - i)} g^{(i)}
+	\]
+\end{thm}
+
+\begin{thm}{}
+	Let $f$ be analytic in some neighbourhood $\Omega$ of $z_0 \in \mathbb{C}$, and $f_n$ such that on $\Omega$ one can write
+	$$
+	f(z) = \psum{n} f_n {(z - z_0)}^n
+	$$
+	then for all $n$, we have
+	$$
+	f_n = \frac{f^{(n)}(z_0)}{n!}
+	$$
+\end{thm}
 
 TODO
 
@@ -112,7 +135,7 @@ f(z)\\
 It is immediate that for all $i \leq r - 1$, we have $${(z - \zeta)} Y_i' = (i-1)Y_i + Y_{i + 1}$$ and
 $$ {(z - \zeta)} Y	_r' = (r - 1)Y_r - {(z - \zeta)} a_{r-1} Y_{r - 1} - \dots - {(z - \zeta)}^r a_0 Y_1 $$
 
-Then, equation \ref{basic_eq_diff} is easily seen to be equivalent to
+Then, equation \eqref{basic_eq_diff} is easily seen to be equivalent to
 
 \begin{equation}\label{eq_diff_matrix_form}
 {(z - \zeta)}Y' = A_\zeta(z)Y
@@ -132,7 +155,7 @@ where $A_\zeta(z)$ is an $r \times r$ matrix.
 \end{definition}
 
 \begin{definition}{{Indicial polynomial, $I_\zeta$}}
-	The characteristic polynomial of $A_\zeta(\zeta)$ is named the \emph{indicial polynomial} of equation \ref{basic_eq_diff} and \ref{eq_diff_matrix_form} at $\zeta$, written $I_\zeta$.
+	The characteristic polynomial of $A_\zeta(\zeta)$ is named the \emph{indicial polynomial} of equation \eqref{basic_eq_diff} and \eqref{eq_diff_matrix_form} at $\zeta$, written $I_\zeta$.
 \end{definition}
 
 %Before defining indicial polynomials in all generality, let us begin with a simple example, allowing one to get a grasp at where the definition comes from.

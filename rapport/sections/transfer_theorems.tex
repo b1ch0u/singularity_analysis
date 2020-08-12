@@ -4,6 +4,8 @@
 
 \section{Transfer theorems}
 
+All the following results come, directly or not, from \cite{Flajolet1990}.
+
 \begin{thm}{Main transfer theorem}
 	Let $f = \sum f_n z^n$ be analytic in some open disk around the origin except for a single dominant singularity $\zeta$ and points in the ray	$R_\zeta = \{t \zeta : t \geq 1 \}$.
 	
@@ -27,6 +29,29 @@
 %	\end{equation*}
 %\end{thm}
 
+
+\begin{thm}{Other cases}
+	\begin{itemize}{}{}
+		~
+		
+		\item If $\alpha \in \mathbb{N}$ and $k = 0$, then $[z^n]{\left(1 - \frac{z}{\zeta}\right)}^\alpha = 0$ for $n > k$
+		because~${\left(1 - \frac{z}{\zeta}\right)}^\alpha$ is a polynomial. So that case can be completely ruled out in estimating asymptotic expansions.
+		
+		%\item If $\alpha > 0$ and $k > 0$
+	\end{itemize}
+	
+%	\tcblower
+%	
+%	Let $f_{a, b} : z \mapsto {(z - \zeta)}^a {(\log (z - \zeta))}^b$.
+%	
+%	Then by Leibniz rule (\ref{Leibniz_rule}),
+%	\[
+%	f_{a, b}^{(n)} = \psum{i = 0}^n f_{a, 0}^{(i)} f_{0, b}^{(n - i)}
+%	\]
+%	
+%	For all $i > a$, we have $f_{a, 0}^{(i)} = 0$.
+%	
+\end{thm}
 
 
 \end{document}
