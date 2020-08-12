@@ -54,4 +54,32 @@ All the following results come, directly or not, from \cite{Flajolet1990}.
 \end{thm}
 
 
+\section{Basic scale transfer}
+
+We quote from \cite{Flajolet2009}
+
+\begin{thm}{Basic scale transfer}
+	Let $\alpha$ be an arbitrary complex number in
+	$\mathbb{C} \setminus \mathbb{Z}_{\leq 0}$.
+	The coefficient of $z^n$ in
+	\[
+	f(z) = {(1 - z)}^{-\alpha}
+	\]
+	admits for large $n$ a complete asymptotic expansion in descending powers of $n$,
+	\[
+	[z^n]f(z) \sim \frac{n^{\alpha - 1}}{\Gamma(\alpha)}
+	\left(1 + \psum{k = 1}^{\infty} \frac{e_k}{n^k} \right)
+	\]
+	where $e_k$ is a polynomial in $\alpha$ of degree $2k$.In particular,
+	\[
+	[z^n]f(z) \sim \frac{n^{\alpha - 1}}{\Gamma(\alpha)}
+	\left(1 + \frac{\alpha (\alpha - 1)}{2n}
+	+ \frac{\alpha (\alpha - 1)(\alpha - 2)(3\alpha - 1)}{24n^2} + O\left( \frac{1}{n^3} \right) \right)
+	\]
+\end{thm}
+
+\begin{remark}
+	When $\alpha$ is a non positive integer, ${(1 - z)}^{-\alpha}$ is a polynomial, so $[z^n]f(z) = 0$ for sufficiently large $n$.
+\end{remark}
+
 \end{document}

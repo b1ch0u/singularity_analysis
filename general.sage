@@ -50,7 +50,7 @@ def my_expansions(op, point, order=None, ring=None):
         def fun(self, ini):
             return log_series(ini, self.shifted_bwrec, order)
     sols = Mapper(ldop).run()
-    return [[(c / ZZ(k).factorial() * (-point)^(sol.leftmost),# + n),
+    return [[(c / ZZ(k).factorial() * (CBF(-point))^(CBF(sol.leftmost + n)),
                 point,
                 sol.leftmost + n,
                 k)
@@ -98,6 +98,19 @@ class GeneralMonomial:
 
     def __lt__(self, other):
         return 1 if self.__cmp__(other) == -1 else 0
+
+
+class Expansion:
+    def __init__(self):
+        self.terms = 0
+        self.bound = 0
+
+    def add_term(self, new_term, term_bound):
+        self.terms += new_term
+        self.bound += term_bound
+
+    def __repr__(self):
+        return f'{self.terms} +-{self.bound}'
 
 
 def compute_initial_decomp(op, first_coefficients):
