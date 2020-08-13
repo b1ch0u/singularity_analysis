@@ -113,6 +113,15 @@ class Expansion:
         return f'{self.terms} +-{self.bound}'
 
 
+def gamma_derivatives(order, point, first_derivatives=[]):
+    if not first_derivatives:
+        s = var('s')
+        first_derivatives.append(gamma(s))
+    while order >= len(first_derivatives):
+        first_derivatives.append(derivative(first_derivatives[-1]))
+    return first_derivatives[-1](point)
+
+
 def compute_initial_decomp(op, first_coefficients):
     def my_local_monomials(op, point):
         dop = DifferentialOperator(op)
