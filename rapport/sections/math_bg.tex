@@ -10,7 +10,29 @@
 	Let $f$ be a differentiable function. We note $f^{(k)}$ its $k$-th derivative.
 \end{definition}
 
+\begin{definition}{{Open balls, closed balls, circles}}
+	For $z_0 \in \mathbb{C}$ and $r > 0$ we define
+	\begin{description}
+		\item[$\mathcal{B} (z_0, r)$] the open ball of center $z_0$ and radius~$r$ as
+		\[
+		\mathcal{B} (z_0, r) := \{z \in \mathbb{C} : |z - z_0| < r \}
+		\]
+		
+		\item[$\mathcal{B}_f (z_0, r)$] the closed ball of center $z_0$ and radius~$r$ as
+		\[
+		\mathcal{B}_f (z_0, r) := \{z \in \mathbb{C} : |z - z_0| \leq r \}
+		\]
+		
+		\item[$\mathcal{C} (z_0, r)$] the circle of center $z_0$ and radius~$r$ as
+		\[
+		\mathcal{S} (z_0, r) := \{z \in \mathbb{C} : |z - z_0| = r \}
+		\]
+	\end{description}
+\end{definition}
+
 \section{Reminders from complex analysis}
+
+%In all this section, $\Omega$ is an open subset of $\mathbb{C}$.
 
 \begin{thm}{Leibniz rule}\label{Leibniz_rule}
 	\[
@@ -18,16 +40,47 @@
 	\]
 \end{thm}
 
+\begin{definition}{Analytic functions}
+	A function $f$ is said to be \emph{analytic} on $\Omega$ if, for all $z_0 \in \Omega$, it admits an expansion
+	\[
+	f(z) = \psum{n \geq 0} f_n {(z - z_0)}^n
+	\]
+	that converges on some neighbourhood of $z_0$.
+\end{definition}
+
+\begin{thm}{Cauchy's integral formula}\label{thm_cauchy_integral}
+	Let $\Omega$ be an open subset of $\mathbb{C}$.
+	
+	Let $\omega \in \Omega$ and $\rho > 0$ such that
+	$\mathcal{B}_f (\omega, \rho) \subset \Omega$.
+	
+	Let $f$ be holomorphic on $\Omega$.
+	
+	Then for all $z_0 \in \mathcal{B} (\omega, \rho)$, we have
+	\begin{equation*}
+		f(z_0) = \frac{1}{2 i \pi} \int_{\mathcal{S} (\omega, r)} \frac{f(z)}{z - z_0} dz
+	\end{equation*}
+\end{thm}
+
+\begin{cor}{Cauchy's coefficient formula}\label{thm_cauchy_coefficients}
+	Let $f$ be analytic on some neighbourhood $\Omega$ of $z_0 \in \mathbb{C}$, and $r > 0$ such that $\mathcal{B}_f (z_0, r) \subset \Omega$, then for all $n$, one has
+	\[
+	f_n = \frac{1}{2i\pi} \int_{\mathcal{C} (z_0, r)}
+	\frac{f(z)}{{(z - z_0)}^{n+1}} dz
+	\]
+\end{cor}
+
 \begin{thm}{}
 	Let $f$ be analytic in some neighbourhood $\Omega$ of $z_0 \in \mathbb{C}$, and $f_n$ such that on $\Omega$ one can write
 	$$
-	f(z) = \psum{n} f_n {(z - z_0)}^n
+	f(z) = \psum{n \geq 0} f_n {(z - z_0)}^n
 	$$
 	then for all $n$, we have
 	$$
 	f_n = \frac{f^{(n)}(z_0)}{n!}
 	$$
 \end{thm}
+
 
 TODO
 
