@@ -99,7 +99,7 @@ We quote from \cite{Flajolet2009}
 \begin{proof}
 	By Cauchy's coefficients formula (\ref{thm_cauchy_coefficients}) in 0:
 	\[
-	f_n = \frac{1}{2i\pi} \int_{\mathcal{C} (0, \frac{1}{2})} \frac{f(z)}{z^{n+1}} dz
+	f_n = \frac{1}{2i\pi} \int_{\mathcal{C} \left(0, \frac{1}{2}\right)} \frac{f(z)}{z^{n+1}} dz
 	\]
 	
 	We deform $\mathcal{C}$ by increasing diameter to $r > 1$, only with a notch coming back to the left of the complex 1.
@@ -133,13 +133,35 @@ We quote from \cite{Flajolet2009}
 	\frac{f(z)}{z^{n+1}} dz
 	&= {(-t)}^{-\alpha} n^\alpha {\left( \log \left( - \frac{n}{t} \right) \right) }^\beta {\left( 1 + \frac{t}{n} \right)}^{-n-1} \frac{dt}{n}\\
 	&= {(-t)}^{-\alpha} n^{\alpha-1} {(\log n)}^\beta {\left( 1 - \frac{\log (-t)}{\log n} \right)}^\beta  {\left( 1 + \frac{t}{n} \right)}^{-n-1} dt
+%	&= {(-t)}^{-\alpha} n^{\alpha-1} {(\log n)}^\beta
+%	{\left( \psum{i = 0}^\beta {\beta \choose i} {\left( - \frac{\log (-t)}{\log n} \right)}^i \right)}
+%	{\left( 1 + \frac{t}{n} \right)}^{-n-1} dt
 	\end{align*}
+	so
+	\begin{equation*}
+		f_n = \frac{1}{2i\pi} n^{\alpha - 1} {(\log n)}^\beta
+		  \int_{\mathcal{H}_n} {(-t)}^{-\alpha} {\left( 1 - \frac{\log (-t)}{\log n} \right)}^\beta  {\left( 1 + \frac{t}{n} \right)}^{-n-1} dt
+	\end{equation*}
 
 	\paragraph{Study of $\left(1 + \frac{t}{n} \right)^{n+1}$}
+	Let us first recall the following inequality, from basic real analysis
+	\begin{remark}
+		For any $y \in \mathbb{R}^+$, one has $\log (1 + y) \geq y - \frac{y^2}{2}$.
+	\end{remark}
+	
+	Let $x \in \mathbb{R}^+$. Then
 	\begin{align*}
-	\left(1 + \frac{t}{n} \right)^{n+1}
-	&= e^{(n+1) \log ( 1 + t/n )}\\
-	&= e^{(n+1) \left( t/n - \frac{1}{2} {(t/n)}^2 + \dots + \epsilon(n) \right)}
+	{\left(1 + \frac{x}{n} \right)}^{-n}
+	&= e^{-n \log \left( 1 + \frac{x}{n} \right)}\\
+	&\leq e^{-x} \cdot e^{\frac{x^2}{2n}}
+	\end{align*}
+	
+	Thus, for $Re(t) \geq {\left(\log n \right)}^2$, one has
+	\begin{align*}
+		{\left|1 + \frac{t}{n}\right|}^{-n-1} &\leq {\left|1 + \frac{t}{n}\right|}^{-n}\\
+				&\leq {\left(1 + \frac{Re(t)}{n} \right)}^{-n}\\
+				&\leq {\left(1 + \frac{{\left(\log n \right)}^2}{n}\right)}^{-n}\\
+				&\leq e^{-{(\log n)}^2} \cdot e^{-\frac{{(\log n)}^4}{2n}}
 	\end{align*}
 \end{proof}
 
