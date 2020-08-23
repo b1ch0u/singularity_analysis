@@ -104,13 +104,13 @@ We quote from \cite{Flajolet2009}
 	
 	We deform $\mathcal{C}$ by increasing diameter to $r > 1$, only with a notch coming back to the left of the complex 1.
 	
-	\cfigure[10cm]{images/transfer_contour.pdf}{The contour we use}
+	\cfigure[8cm]{images/transfer_contour.pdf}{$\mathcal{C}$}
 	
 	\paragraph{Outer circle}
 	One has
 	\begin{align*}
 		\left| \frac{1}{2i\pi} \int_{\mathcal{C}(0, r)} \frac{f(z)}{z^{n+1}} dz \right| \leq
-		\frac{1}{2 \pi r^{n + 1}} {(r + 1)}^\alpha {\log (r + 1)}^\beta
+		\frac{1}{2 \pi r^{n + 1}} {(r + 1)}^{-\alpha} {\log (r + 1)}^\beta
 	\end{align*}
 	
 	Therefore, letting $r$ go to infinity, one has
@@ -140,10 +140,15 @@ We quote from \cite{Flajolet2009}
 	so
 	\begin{equation*}
 		f_n = \frac{1}{2i\pi} n^{\alpha - 1} {(\log n)}^\beta
-		  \int_{\mathcal{H}_n} {(-t)}^{-\alpha} {\left( 1 - \frac{\log (-t)}{\log n} \right)}^\beta  {\left( 1 + \frac{t}{n} \right)}^{-n-1} dt
+		  \int_{\mathcal{H}} {(-t)}^{-\alpha} {\left( 1 - \frac{\log (-t)}{\log n} \right)}^\beta  {\left( 1 + \frac{t}{n} \right)}^{-n-1} dt
 	\end{equation*}
+	where $\mathcal{H}$ is as follows
+	\cfigure[4cm]{images/transfer_contour_normalized.pdf}{$\mathcal{H}$}
 
-	\paragraph{Study of $\left(1 + \frac{t}{n} \right)^{n+1}$}
+	\paragraph{Away from the origin}
+	Let $\hat{\mathcal{H}} := \{t \in \mathcal{H} \mid Re(t) \geq {(\log n)}^2 \}$.
+	
+	\subparagraph{Study of $\left(1 + \frac{t}{n} \right)^{n+1}$}
 	Let us first recall the following inequality, from basic real analysis
 	\begin{remark}
 		For any $y \in \mathbb{R}^+$, one has $\log (1 + y) \geq y - \frac{y^2}{2}$.
@@ -163,6 +168,38 @@ We quote from \cite{Flajolet2009}
 				&\leq {\left(1 + \frac{{\left(\log n \right)}^2}{n}\right)}^{-n}\\
 				&\leq e^{-{(\log n)}^2} \cdot e^{-\frac{{(\log n)}^4}{2n}}
 	\end{align*}
+	
+	***
+	
+	
+%	Since $\hat{\mathcal{H}}$ can be decomposed as the union of $\hat{\mathcal{H}}^+ := \{ u + i \mid u \geq {(\log n)}^2 \}$ and $\hat{\mathcal{H}}^- := \{ u - i \mid u \geq {(\log n)}^2 \}$, we have
+%	
+%	\begin{align*}
+%	\int_{\hat{\mathcal{H}}} \left| {(-t)}^{-\alpha} {\left( 1 - \frac{\log (-t)}{\log n} \right)}^\beta \right| dt
+%	= \int_{ \{ u \geq {(\log n)}^2 \} }& \Bigg( \left| {(-u-i)}^{-\alpha} {\left( 1 - \frac{\log (-u-i)}{\log n} \right)}^\beta \right| \Bigg.\\
+%				&+ \Bigg. \left| {(-u+i)}^{-\alpha} {\left( 1 - \frac{\log (-u+i)}{\log n} \right)}^\beta \right| \Bigg) dt
+%	\end{align*}
+	
+	\begin{align*}
+	\left| \int_{\hat{\mathcal{H}}} {(-t)}^{-\alpha} {\left( 1 - \frac{\log (-t)}{\log n} \right)}^\beta  {\left( 1 + \frac{t}{n} \right)}^{-n-1} dt \right|
+	&\leq e^{-{(\log n)}^2} \cdot e^{-\frac{{(\log n)}^4}{2n}} \int_{\hat{\mathcal{H}}} \left| {(-t)}^{-\alpha} {\left( 1 - \frac{\log (-t)}{\log n} \right)}^\beta \right| dt\\
+	&\leq
+	\end{align*}
+	
+%	\begin{lemma}{}
+%		Let $z$ and $w$ complex numbers, with $z \not\in \mathbb{R}^-$.
+%		Then $$\left|z^w\right| \leq {|z|}^{|w|}$$
+%		
+%		\tcblower
+%		
+%		\begin{align*}
+%		\left|z^w\right| &= \left| e^{w \log z} \right|\\
+%						 &= e^{Re(w \log z)}\\
+%						 &\leq e^{|w \log z|}\\
+%						 &\\
+%						 &\leq {|z|}^{|w|}
+%		\end{align*}
+%	\end{lemma}
 \end{proof}
 
 \end{document}

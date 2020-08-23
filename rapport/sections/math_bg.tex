@@ -261,6 +261,22 @@ where $A_\zeta(z)$ is an $r \times r$ matrix.
 	where $\theta_j$ are the roots of the indicial polynomial, each $H_j$ is analytic at 0, and $m \in \mathbb{N}$. 
 \end{thm}
 
+\subsection{Special cases}
+
+\begin{definition}{G-functions}
+	A formal series $f = \sum f_n z^n \in \mathbb{Q}[[z]]$ is called a \emph{G-function} if it is D-finite and there exists $C > 0$ such that for all $n$, we have
+	\begin{align*}
+	\begin{cases}
+	|f_n| < C^n\\
+	lcd(f_1, \dots, f_n) < C^n
+	\end{cases}
+	\end{align*}	
+\end{definition}
+
+\begin{thm}{André-Chudnovsky-Katz Theorem}
+	Let $f$ be a G-function. Then a minimal order annihilating D-finite equation for $f$ has only ordinary or regular singular points, and its indicial polynomial has only rational roots.
+\end{thm}
+
 
 \subfile{sections/transfer_theorems}
 
