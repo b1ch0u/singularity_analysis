@@ -25,7 +25,7 @@
 		
 		\item[$\mathcal{C} (z_0, r)$] the circle of center $z_0$ and radius~$r$ as
 		\[
-		\mathcal{S} (z_0, r) := \{z \in \mathbb{C} : |z - z_0| = r \}
+		\mathcal{C} (z_0, r) := \{z \in \mathbb{C} : |z - z_0| = r \}
 		\]
 	\end{description}
 \end{definition}
@@ -83,6 +83,56 @@
 
 
 TODO
+
+\subsection{Complex logarithm}
+
+\paragraph{A few identities}
+
+For a reference over the following definitions and identities, the reader is referred to \cite{Brown1996}.
+
+From now on, except explicitly stated otherwise, $\log z$ and $\arg z$ will stand for the principal determination of the complex logarithm and argument.
+
+\begin{definition}{{$N_+, N_-$}}
+	Let $z_1, z_2 \in \mathbb{C}^*$. Define $N_+(z_1, z_2)$ and $N_-(z_1, z_2)$ with
+	\begin{align*}
+	N_\pm =
+	\begin{cases}
+	-1 &\text{ if } \pi < \arg (z_1) \pm \arg (z_2)\\
+	0  &\text{ if } - \pi < \arg (z_1) \pm \arg (z_2) \leq \pi \\
+	1  &\text{ if } \arg (z_1) \pm \arg (z_2) \leq -\pi
+	\end{cases}
+	\end{align*}
+\end{definition}
+
+\begin{remark}
+	The previous definition is intended to have to following relations hold:
+	\begin{align*}
+	\begin{cases}
+	\arg(z_1 z_2) &= \arg (z_1) + \arg (z_2) + 2\pi N_+\\
+	\arg \left(\frac{z_1}{z_2}\right) &= \arg (z_1) - \arg (z_2) + 2\pi N_-
+	\end{cases}
+	\end{align*}
+\end{remark}
+
+\begin{prop}{}
+	Let $a, b, c \in \mathbb{C}^*$. Then
+	\begin{align*}
+		\log (a b) &= \log a + \log b + 2 i \pi N_+ (a, b)\\
+		\log \left(\frac{a}{b}\right) &=  \log a - \log b + 2 i \pi N_- (a, b)\\
+		{(a b)}^c &= a^c \times b^c \times e^{2i\pi c N_+(a, b)}\\
+		{\left(\frac{a}{b}\right)}^c &= \frac{a^c}{b^c} e^{2i\pi c N_-(a, b)}
+	\end{align*}
+\end{prop}
+
+\begin{cor}{}\label{cor_log_identities}
+	Let $x \in \mathbb{R}^{+*}$ and $z,t \in \mathbb{C}^*$. Then $\arg(x) = 0$, so all classical identities over real numbers extend identically:
+	\begin{align*}
+	\log (xz) &= \log x + \log z\\
+	\log \left(\frac{x}{z}\right) &=  \log x - \log z\\
+	{(x z)}^t &= x^t \times z^t\\
+	{\left(\frac{x}{z}\right)}^t &= \frac{x^t}{z^t}
+	\end{align*}
+\end{cor}
 
 %\section{D-finiteness and P-recursiveness}
 %

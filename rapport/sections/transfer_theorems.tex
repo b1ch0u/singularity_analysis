@@ -15,42 +15,9 @@ All the following results come, directly or not, from \cite{Flajolet1990}.
 	$$f_n \sim C {\zeta}^{-n} \frac{n^{-\alpha - 1}}{\Gamma(-\alpha)} {(\log n)}^m$$
 \end{thm}
 
-%\begin{thm}{}
-%	Let $\alpha \neq 0$. Then
-%	
-%	\begin{equation}\label{basic_scale_transfer}
-%		[z^n] {(1 - z)}^\alpha \sim \frac{n^{-\alpha - 1}}{\Gamma(-\alpha)} \left( 1 + \psum{k \geq 1} \frac{e_k^{(\alpha)}}{n^k} \right)
-%	\end{equation}
-%	
-%	where
-%	
-%	\begin{equation*}
-%		e_k^\alpha = 
-%	\end{equation*}
-%\end{thm}
-
-
-\begin{thm}{Other cases}
-	\begin{itemize}{}{}
-		~
-		
-		\item If $\alpha \in \mathbb{N}$ and $k = 0$, then $[z^n]{\left(1 - \frac{z}{\zeta}\right)}^\alpha = 0$ for $n > k$
-		because~${\left(1 - \frac{z}{\zeta}\right)}^\alpha$ is a polynomial. So that case can be completely ruled out in estimating asymptotic expansions.
-		
-		%\item If $\alpha > 0$ and $k > 0$
-	\end{itemize}
-	
-%	\tcblower
-%	
-%	Let $f_{a, b} : z \mapsto {(z - \zeta)}^a {(\log (z - \zeta))}^b$.
-%	
-%	Then by Leibniz rule (\ref{Leibniz_rule}),
-%	\[
-%	f_{a, b}^{(n)} = \psum{i = 0}^n f_{a, 0}^{(i)} f_{0, b}^{(n - i)}
-%	\]
-%	
-%	For all $i > a$, we have $f_{a, 0}^{(i)} = 0$.
-%	
+\begin{thm}{Polynomial case}
+	If $\alpha \in \mathbb{N}$ and $k = 0$, then $[z^n]{\left(1 - \frac{z}{\zeta}\right)}^\alpha = 0$ for $n > k$
+	because~${\left(1 - \frac{z}{\zeta}\right)}^\alpha$ is a polynomial. So that case can be completely ruled out in estimating asymptotic expansions.
 \end{thm}
 
 
@@ -68,85 +35,123 @@ We quote from \cite{Flajolet2009}
 	admits for large $n$ a complete asymptotic expansion in descending powers of $n$,
 	\[
 	[z^n]f(z) \sim \frac{n^{\alpha - 1}}{\Gamma(\alpha)}
-	\left(1 + \psum{k = 1}^{\infty} \frac{e_k}{n^k} \right)
+	\left(1 + \psum{k = 1}^{\infty} \frac{e_k^{(\alpha)}}{n^k} \right)
 	\]
-	where $e_k$ is a polynomial in $\alpha$ of degree $2k$.In particular,
+	where $e_k^{(\alpha)}$ is a polynomial in $\alpha$ of degree $2k$.
+%	In particular,
+%	\[
+%	[z^n]f(z) \sim \frac{n^{\alpha - 1}}{\Gamma(\alpha)}
+%	\left(1 + \frac{\alpha (\alpha - 1)}{2n}
+%	+ \frac{\alpha (\alpha - 1)(\alpha - 2)(3\alpha - 1)}{24n^2} + O\left( \frac{1}{n^3} \right) \right)
+%	\]
+	More precisely,
 	\[
-	[z^n]f(z) \sim \frac{n^{\alpha - 1}}{\Gamma(\alpha)}
-	\left(1 + \frac{\alpha (\alpha - 1)}{2n}
-	+ \frac{\alpha (\alpha - 1)(\alpha - 2)(3\alpha - 1)}{24n^2} + O\left( \frac{1}{n^3} \right) \right)
+	e_k^{(\alpha)} = \psum{i = k}^{2k} {(-1)}^i \lambda_{k, i} (\alpha + 1) (\alpha + 2) \dots (\alpha + i)
 	\]
+	with $\psum{k, i \geq 0} \lambda_{k, i} v^k t^i = e^t {(1 + vt)}^{-1 - 1/v}$.
 \end{thm}
 
+Let $\mathcal{H}$ denote the contour
+\cfigure[4cm]{images/transfer_contour_normalized.pdf}{$\mathcal{H}$}
+
+\begin{lemma}{}\label{lemma_int_a_entier}
+	Let $n \in \mathbb{N}$.
+	Then $$\int_H {(-t)}^n e^{-t} dt = 0$$
+	
+	\tcblower
+	
+	The map $t \mapsto {(-t)}^n e^{-t}$ is an entire function. Thus, with $H_{\leq r} := \{z \in H \mid \Re(z) \leq r\}$ for $r > 0$, we have
+	$$
+	\int_{H_{\leq r}} {(-t)}^n e^{-t}dt = -\int_{\{r + iu ~\mid~ u \in [-1, 1]\}} {(-t)}^n e^{-t} dt
+	$$
+	and the modulus of the latter integral tends to 0 as $r$ tends to infinity.
+\end{lemma}
+
+\begin{lemma}{}\label{lemma_int_a_complexe}
+	Let $a \not\in \mathbb{N}$.
+	Then $$\int_H {(-t)}^a e^{-t} dt = \frac{2i\pi}{\Gamma(-a)}$$
+\end{lemma}
 
 \begin{remark}
-	If $\alpha \in \mathbb{Z}_{\leq 0}$, then ${(1 - z)}^{-\alpha}$ is a polynomial, so $[z^n]f(z) = 0$ for sufficiently large $n$.
+	Lemma \ref{lemma_int_a_entier} can be viewed as a limit case of lemma \ref{lemma_int_a_complexe}, since $\Gamma$ has poles at negative integers.
 \end{remark}
 
-\subsection{Complete scale}
-
 \begin{thm}{}
-	Let $\alpha \in \mathbb{C} \setminus \mathbb{Z}_{\leq 0}$ and $\beta \in \mathbb{N}$.
+	Let $a \in \mathbb{R} \setminus \mathbb{Z}_{\leq 0}$ and $b \in \mathbb{N}^*$.
 	
 	Let
 	\[
-	f : z \mapsto {(1 - z)}^{-\alpha} {\left( \log \frac{1}{1 - z} \right)}^\beta
+	f : z \mapsto {(1 - z)}^{-a} {\left( \frac{1}{z} \log \frac{1}{1 - z} \right)}^b
 	\]
-	
 	then for large $n$ one has
+	$$f_n = [z^n] f(z) \sim
+	\frac{n^{-a -1}}{\Gamma(-a)}
+	{(\log n)}^b
+	\left(1 + \psum{k \geq 1} \frac{e_k^{(a, b)}}{\log^k n} \right)$$
+	with
+	$$
+	e_k^{(a, b)} = {(-1)}^k {b \choose k} \Gamma(-a) \frac{d^k}{ds^k} \left[ \frac{1}{\Gamma(-s)} \right] (a)
+	$$
 \end{thm}
 
 \begin{proof}
+	Note that $f$ is analytic in the plane slit $[1, +\infty]$.
+
 	By Cauchy's coefficients formula (\ref{thm_cauchy_coefficients}) in 0:
 	\[
-	f_n = \frac{1}{2i\pi} \int_{\mathcal{C} \left(0, \frac{1}{2}\right)} \frac{f(z)}{z^{n+1}} dz
+	f_n = \frac{1}{2i\pi} \int_{C} \frac{f(z)}{z^{n+1}} dz
 	\]
 	
-	We deform $\mathcal{C}$ by increasing diameter to $r > 1$, only with a notch coming back to the left of the complex 1.
+	Where $C$ is a deformed circle with a notch coming back to the left of the complex 1.
 	
-	\cfigure[8cm]{images/transfer_contour.pdf}{$\mathcal{C}$}
+	\cfigure[8cm]{images/transfer_contour.pdf}{$C$}
 	
-	\paragraph{Outer circle}
-	One has
+	More precisely, $C := \gamma_1 \cup \gamma_2 \cup \gamma_3 \cup \gamma_4$, where
 	\begin{align*}
-		\left| \frac{1}{2i\pi} \int_{\mathcal{C}(0, r)} \frac{f(z)}{z^{n+1}} dz \right| \leq
-		\frac{1}{2 \pi r^{n + 1}} {(r + 1)}^{-\alpha} {\log (r + 1)}^\beta
+		\gamma_1 := &\left\{ {{z = 1 - \frac{u}{n}} ;~ {u = e^{i \theta}, \theta \in \left[- \frac{\pi}{2}, \frac{\pi}{2} \right]}} \right\}\\
+		\gamma_2, \gamma_4 := &\left\{ z = 1 + \frac{u \pm i}{n} ;~ u \in [0, n] \right\}\\
+		\gamma_3 := &\left\{ z ;~ |z| = {\left(4 + \frac{1}{n^2}\right)}^{1/2}, \Re(z) \leq 2 \right\}
 	\end{align*}
 	
-	Therefore, letting $r$ go to infinity, one has
-	\[
-	f_n = \frac{1}{2i\pi} \int_{\mathcal{H}_n} \frac{f(z)}{z^{n+1}} dz
-	\]
-	where $\mathcal{H}_n := \mathcal{H}^-(n) \cup \mathcal{H}^+(n) \cup \mathcal{H}^\circ(n)$ with
-	\begin{equation*}
-		\begin{cases}
-		\mathcal{H}^-(n) = \{z \mid z = x - \frac{i}{n}, x \in \mathbb{R} \}\\
-		\mathcal{H}^+(n) = \{z \mid z = x + \frac{i}{n}, x \in \mathbb{R} \}\\
-		\mathcal{H}^\circ(n) = \{z \mid z = 1 - \frac{e^{i \phi}}{n}, \phi \in [ - \frac{\pi}{2}, \frac{\pi}{2} ] \}
-		\end{cases}
-	\end{equation*}
+	\paragraph{Outer circle}
+	Let $r = {\left(4 + \frac{1}{n^2}\right)}^{1/2}$. Then 
+	\begin{align*}
+		\left| \frac{1}{2i\pi} \int_{\gamma_3} \frac{f(z)}{z^{n+1}} dz \right|
+		&\leq \frac{1}{2\pi} \int_{\gamma_3} \left| \frac{f(z)}{z^{n+1}} \right| dz \\
+		&\leq \frac{1}{2i\pi} \int_{\mathcal{C}(0, r)} \left| \frac{f(z)}{z^{n+1}} \right| dz\\
+		& \leq \frac{1}{2 \pi r^{n + 1}} {(r + 1)}^{-a} {\log (r + 1)}^b
+	\end{align*}
+	which is a $O(r^{-n})$, so the main part of our expansion is expected to come from the integral over $\gamma_1 \cup \gamma_2 \cup \gamma_4$.
+	
+%	where $\mathcal{H}_n := \mathcal{H}^-(n) \cup \mathcal{H}^+(n) \cup \mathcal{H}^\circ(n)$ with
+%	\begin{equation*}
+%		\begin{cases}
+%		\mathcal{H}^-(n) = \{z \mid z = x - \frac{i}{n}, x \in \mathbb{R} \}\\
+%		\mathcal{H}^+(n) = \{z \mid z = x + \frac{i}{n}, x \in \mathbb{R} \}\\
+%		\mathcal{H}^\circ(n) = \{z \mid z = 1 - \frac{e^{i \phi}}{n}, \phi \in [ - \frac{\pi}{2}, \frac{\pi}{2} ] \}
+%		\end{cases}
+%	\end{equation*}
 	
 	\paragraph{Change of variable}	
 	Now introduce the change of variable $z \mapsto 1 + \frac{t}{n}$.
-	Then
+	Then (using corollary \ref{cor_log_identities} and the fact that $b$ is a positive integer)
 	\begin{align*}
 	\frac{f(z)}{z^{n+1}} dz
-	&= {(-t)}^{-\alpha} n^\alpha {\left( \log \left( - \frac{n}{t} \right) \right) }^\beta {\left( 1 + \frac{t}{n} \right)}^{-n-1} \frac{dt}{n}\\
-	&= {(-t)}^{-\alpha} n^{\alpha-1} {(\log n)}^\beta {\left( 1 - \frac{\log (-t)}{\log n} \right)}^\beta  {\left( 1 + \frac{t}{n} \right)}^{-n-1} dt
-%	&= {(-t)}^{-\alpha} n^{\alpha-1} {(\log n)}^\beta
-%	{\left( \psum{i = 0}^\beta {\beta \choose i} {\left( - \frac{\log (-t)}{\log n} \right)}^i \right)}
-%	{\left( 1 + \frac{t}{n} \right)}^{-n-1} dt
+	&= {(-t)}^{-a} n^a {\left( \log \left( - \frac{n}{t} \right) \right) }^b {\left( 1 + \frac{t}{n} \right)}^{-n-1} \frac{dt}{n}\\
+	&= {(-t)}^{-a} n^{a-1} {(\log n)}^b {\left( 1 - \frac{\log (-t)}{\log n} \right)}^b  {\left( 1 + \frac{t}{n} \right)}^{-n-1} dt\\
+	&= {(-t)}^{-a} n^{a-1} {(\log n)}^b
+	{\left( \psum{i = 0}^b {b \choose i} {\left( - \frac{\log (-t)}{\log n} \right)}^i \right)}
+	{\left( 1 + \frac{t}{n} \right)}^{-n-1} dt
 	\end{align*}
 	so
 	\begin{equation*}
-		f_n = \frac{1}{2i\pi} n^{\alpha - 1} {(\log n)}^\beta
-		  \int_{\mathcal{H}} {(-t)}^{-\alpha} {\left( 1 - \frac{\log (-t)}{\log n} \right)}^\beta  {\left( 1 + \frac{t}{n} \right)}^{-n-1} dt
+		f_n = \frac{1}{2i\pi} n^{a - 1} {(\log n)}^b \psum{i=0}^b  {b \choose i}
+		  \int_{\mathcal{H}_n} {(-t)}^{-a} {\left( - \frac{\log (-t)}{\log n} \right)}^i {\left( 1 + \frac{t}{n} \right)}^{-n-1} dt
 	\end{equation*}
-	where $\mathcal{H}$ is as follows
-	\cfigure[4cm]{images/transfer_contour_normalized.pdf}{$\mathcal{H}$}
+	where $\mathcal{H}_n := \{z \in \mathcal{H} \mid \Re(z) \leq n \}$.
 
 	\paragraph{Away from the origin}
-	Let $\hat{\mathcal{H}} := \{t \in \mathcal{H} \mid Re(t) \geq {(\log n)}^2 \}$.
+	Let $\hat{\mathcal{H}} := \{t \in \mathcal{H} \mid \Re(t) \geq {(\log n)}^2 \}$.
 	
 	\subparagraph{Study of $\left(1 + \frac{t}{n} \right)^{n+1}$}
 	Let us first recall the following inequality, from basic real analysis
@@ -161,12 +166,12 @@ We quote from \cite{Flajolet2009}
 	&\leq e^{-x} \cdot e^{\frac{x^2}{2n}}
 	\end{align*}
 	
-	Thus, for $Re(t) \geq {\left(\log n \right)}^2$, one has
+	Thus, for $\Re(t) \geq {\left(\log n \right)}^2$, one has
 	\begin{align*}
 		{\left|1 + \frac{t}{n}\right|}^{-n-1} &\leq {\left|1 + \frac{t}{n}\right|}^{-n}\\
-				&\leq {\left(1 + \frac{Re(t)}{n} \right)}^{-n}\\
+				&\leq {\left(1 + \frac{\Re(t)}{n} \right)}^{-n}\\
 				&\leq {\left(1 + \frac{{\left(\log n \right)}^2}{n}\right)}^{-n}\\
-				&\leq e^{-{(\log n)}^2} \cdot e^{-\frac{{(\log n)}^4}{2n}}
+				&\leq e^{-{(\log n)}^2} \cdot e^{\frac{{(\log n)}^4}{2n}}
 	\end{align*}
 	
 	***
@@ -179,10 +184,22 @@ We quote from \cite{Flajolet2009}
 %	= \int_{ \{ u \geq {(\log n)}^2 \} }& \Bigg( \left| {(-u-i)}^{-\alpha} {\left( 1 - \frac{\log (-u-i)}{\log n} \right)}^\beta \right| \Bigg.\\
 %				&+ \Bigg. \left| {(-u+i)}^{-\alpha} {\left( 1 - \frac{\log (-u+i)}{\log n} \right)}^\beta \right| \Bigg) dt
 %	\end{align*}
+
+	On $\hat{\mathcal{H}}^+$, we have
+	\begin{align*}
+		arg\left(-\frac{n}{t}\right) &= arg(-n) - arg(t)\\
+									&\in [\pi - Arg(\log^2 (n) + i), \pi]
+	\end{align*}
+	
+	So
+	\begin{align*}
+		\left| {\log\left(\frac{n}{t}\right)}^\beta \right| \leq
+		{\left(\log\left(\left|\frac{n}{t}\right|\right) + \left|arg\left(\frac{n}{t}\right)\right|\right)}^\beta
+	\end{align*}
 	
 	\begin{align*}
 	\left| \int_{\hat{\mathcal{H}}} {(-t)}^{-\alpha} {\left( 1 - \frac{\log (-t)}{\log n} \right)}^\beta  {\left( 1 + \frac{t}{n} \right)}^{-n-1} dt \right|
-	&\leq e^{-{(\log n)}^2} \cdot e^{-\frac{{(\log n)}^4}{2n}} \int_{\hat{\mathcal{H}}} \left| {(-t)}^{-\alpha} {\left( 1 - \frac{\log (-t)}{\log n} \right)}^\beta \right| dt\\
+	&\leq e^{-{(\log n)}^2} \cdot e^{\frac{{(\log n)}^4}{2n}} \int_{\hat{\mathcal{H}}} \left| {(-t)}^{-\alpha} {\left( 1 - \frac{\log (-t)}{\log n} \right)}^\beta \right| dt\\
 	&\leq
 	\end{align*}
 	
@@ -194,12 +211,71 @@ We quote from \cite{Flajolet2009}
 %		
 %		\begin{align*}
 %		\left|z^w\right| &= \left| e^{w \log z} \right|\\
-%						 &= e^{Re(w \log z)}\\
+%						 &= e^{\Re(w \log z)}\\
 %						 &\leq e^{|w \log z|}\\
 %						 &\\
 %						 &\leq {|z|}^{|w|}
 %		\end{align*}
 %	\end{lemma}
 \end{proof}
+
+%\section{Transfer theorem in the integer case}
+%
+%We closely follow \cite{Jungen1931} in this section.
+%
+%\begin{prop}{}
+%	Let $k \in \mathbb{N}^*$ and $f = \sum f_n z^n$ with
+%	$$
+%	f(z) = {(1 - z)}^{-k}
+%	$$
+%	Then for all $n$, we have
+%	$$
+%	f_n = \frac{n^{k - 1}}{\Gamma(k)} \left[1 + \frac{k(k-1)}{2n} + \dots + \frac{\Gamma(k)}{n^{k-1}}\right]
+%	$$
+%\end{prop}
+%\begin{proof}
+%	Start with
+%	$${(1 - z)}^{-1} = \sum z^n$$
+%	Now differentiating that relation $k - 1$ times, we get
+%	$$
+%	(k-1)! {(1-z)}^{-k} = \sum \frac{(n + s -1)!}{n!}z^n
+%	$$
+%	Therefore $f_n = \frac{1}{(k-1)!} (n+1)(n+2)\dots(n+s-1)$, and the result follows by developing the product and grouping by powers of $n$.
+%\end{proof}
+
+%\begin{thm}{Transfer theorem in the integer case}
+%	Let $a \in \mathbb{N}$ and $b \in \mathbb{N}^*$.
+%	
+%	Let
+%	\[
+%	f : z \mapsto {(1 - z)}^{a} {\left( \frac{1}{z} \log \frac{1}{1 - z} \right)}^b
+%	\]
+%	then for large $n$ one has
+%	$$
+%	f_n = {(-1)}^a b \Gamma(1 + a) n^{-a - 1} \psum{j = 0}^\infty \frac{F_j(\log n)}{n^k}
+%	$$
+%	with $deg(F_j) \leq k-1$.
+%\end{thm}
+%
+%\begin{proof}
+%	Let $$\phi_0 : z \mapsto \Gamma(a) {(1 - z)}^{-a}
+%	= \psum{n = 0}^\infty \frac{\Gamma(a + n)}{n!}$$
+%	By differentiating $i$ times with respect to $a$, we get
+%	\begin{equation}
+%		\Gamma(a) {(1 - z)}^{-a}
+%	\end{equation}
+%\end{proof}
+%
+%\paragraph{majoration pour les termes supplémentaires}
+%Again by Cauchy's formula,
+%\[
+%f_n = \frac{1}{2i\pi} \int_{C} \frac{f(z)}{z^{n+1}} dz
+%\]
+%therefore
+%\begin{align*}
+%|f_n|	&\leq \left| \frac{1}{2i\pi} \int_{C} \frac{f(z)}{z^{n+1}} \right| dz\\
+%		&\leq \frac{1}{2\pi} \int_{C} \left| \frac{f(z)}{z^{n+1}} \right| dz\\
+%		&\leq \frac{1}{2\pi} \int_{C}
+%\end{align*}
 
 \end{document}
