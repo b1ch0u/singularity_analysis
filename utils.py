@@ -10,6 +10,7 @@ def get_e_k(k, alpha):
                                                 for i in range(k))
                for i in range(k, 2*k + 1))
 
+
 def gamma_derivatives(order, point, first_derivatives=[]):
     if not first_derivatives:
         s = var('s')
