@@ -26,11 +26,7 @@ def test_is_regular_singular_point():
     assert not is_regular_singular_point(1/5, 12, z, op4)
 
 
-if __name__ == '__main__':
-    test_is_regular_singular_point()
-
-    #####
-
+def test_extract_asymptotics():
     Pols.<z> = PolynomialRing(QQ)
     Diff.<Dz> = OreAlgebra(Pols)
 
@@ -38,7 +34,11 @@ if __name__ == '__main__':
     precision = 1e-10
 
     def my_extract(op, first_coefficients):
-        return extract_asymptotics(op, first_coefficients, z, order=order, precision=precision)
+        return extract_asymptotics(op,
+                                   first_coefficients,
+                                   z,
+                                   order=order,
+                                   precision=precision)
 
     op = (1 - z - z^2) * Dz^2 - (2 + 4*z) * Dz - 2
     print('Fibonacci numbers ->', my_extract(op, [0, 1, 1, 2, 3, 5]))
@@ -95,3 +95,8 @@ if __name__ == '__main__':
         print('Catalan numbers ->', my_extract(op, [1, 1, 2, 5, 14]))
     except ValueError as e:
         print('Catalan numbers ->', str(e))
+
+
+if __name__ == '__main__':
+    test_is_regular_singular_point()
+    test_extract_asymptotics()
