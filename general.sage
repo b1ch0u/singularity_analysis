@@ -1,4 +1,5 @@
-#from sage.all import *
+from sage.symbolic.ring import SR
+from sage.rings.asymptotic.growth_group import GrowthGroup, ExponentialGrowthGroup
 
 from ore_algebra import *
 
@@ -7,41 +8,28 @@ from ore_algebra.analytic.local_solutions import (log_series, LocalBasisMapper,
                                                   simplify_exponent, LogMonomial)
 from ore_algebra.analytic.path import Point
 
-import itertools as it
-
 from utils import *
 
 
-EPS = 1e-20
-ORDER = 4
+DEFAULT_PRECISION = 1e-10
+DEFAULT_ORDER = 5
 
 
-def group_by_module(roots):
-    '''
-    Returns an iterator over groups of roots, grouped by increasing module.
-    Assumes `roots` to be an iterable over 2-tuples of the form (root, multiplicity).
-    '''
-    def root_module(t):
-        return abs(t[0])
-    roots.sort(key=root_module)
-    return it.groupby(roots, key=root_module)
-
-
-def is_regular_singular_point(point, leading_mult, var, op):
+def is_regular_singular_point(point, leading_mult, z, op):
     '''
     Checks wether a point is a regular singular point of a differential operator.
     `leading_mult` is the multiplicity of `point` as a root
     of the leading coefficient of `op`.
     '''
     r = op.order()
-    for i, poly in enumerate(op): # 0 -> p_0, ...
+    for i, poly in enumerate(op):
         if r - i < leading_mult \
-                and not ((var - point)^(leading_mult - (r - i))).divides(poly):
+                and not ((z - point)^(leading_mult - (r - i))).divides(poly):
             return False
     return True
 
 
-def my_expansions(op, point, order=None, ring=None):
+def my_expansions(op, point, order=None):
     mypoint = Point(point, op)
     dop = DifferentialOperator(op)
     ldop = dop.shift(mypoint)
@@ -52,7 +40,7 @@ def my_expansions(op, point, order=None, ring=None):
         def fun(self, ini):
             return log_series(ini, self.shifted_bwrec, order)
     sols = Mapper(ldop).run()
-    return [[(c / ZZ(k).factorial() * (CBF(-point))^(CBF(sol.leftmost + n)),
+    return [[(c / ZZ(k).factorial(),
                 point,
                 sol.leftmost + n,
                 k)
@@ -61,92 +49,12 @@ def my_expansions(op, point, order=None, ring=None):
             for sol in sols]
 
 
-class GeneralMonomial:
-    def __init__(self, c, zeta, alpha, m):
-        # TODO verifier domaines d'analyticite
-        self.c = c
-        self.zeta = zeta
-        self.alpha = alpha
-        self.m = m
-        self.asymp_c = c / gamma(-alpha)
-
-    def is_singular(self):
-        return self.alpha < 0 or self.m != 0
-
-    def __repr__(self):
-        if self.m == 0:
-            return f'{self.asymp_c} * {1/self.zeta}^n * n^{-self.alpha - 1}'
-        return f'{self.asymp_c} * {1/self.zeta}^n * n^{-self.alpha - 1} * log^{self.m}(n)'
-
-    def asymptotic_symbolic(self):
-        n = var('n')
-        return (self.c / gamma(-self.alpha)) * self.zeta^n * n^(-self.alpha - 1) * log(n)^self.m
-
-    def __cmp__(self, other):
-        biggest = None
-        if abs(self.zeta) != abs(other.zeta):
-            biggest = self if abs(self.zeta) < abs(other.zeta) else other  # le plus petit |zeta| gagne
-        elif self.alpha != other.alpha:
-            biggest = self if self.alpha < other.alpha else other  # le plus petit alpha gagne
-        elif self.m != other.m:
-            biggest = self if self.m > other.m else other  # le plus grand m gagne
-        if biggest is None or not biggest.c.is_nonzero():
-            return 0
-        return 1 if biggest is self else -1
-
-    def __le__(self, other):
-        return 0 if self.__cmp__(other) == 1 else 1
-
-    def __lt__(self, other):
-        return 1 if self.__cmp__(other) == -1 else 0
-
-
-class Monomial:
-    def __init__(self, coeff, exp_base, n_power, log_power):
-        self.coeff = coeff
-        self.exp_base = exp_base
-        self.n_power = n_power
-        self.log_power = log_power
-
-
-def basic_transfer(zeta, alpha, order):
-    res = []
-    common_coeff = (-zeta)^alpha / gamma(-alpha)
-    for k in range(order):
-        res.append(Monomial(common_coeff * get_e_k(k, alpha),
-                            1/zeta,
-                            -alpha - 1 - k,
-                            0))
-    return res
-
-
-def log_transfer(zeta, alpha, m, order):
-    # TODO renormalisation
-    pass
-
-
-def compute_term_expansion(coeff, alpha, m, zeta, order):
-    if alpha in NN and m == 0:
-        return []
-    if alpha not in NN and m == 0:
-        return basic_transfer(zeta, alpha, order)
-    return log_transfer(zeta, alpha, m, order)
-
-
-# class Expansion:
-#     def __init__(self):
-#         self.terms = 0
-#         self.bound = 0
-
-#     def add_term(self, new_term, term_bound):
-#         self.terms += new_term
-#         self.bound += term_bound
-
-#     def __repr__(self):
-#         return f'{self.terms} +-{self.bound}'
-
-
 def compute_initial_decomp(op, first_coefficients):
+    '''
+    Compute the decomposition of the solution to differential operator `op`
+    with first coefficients `first_coefficients` in the local basis in 0,
+    as calculated by local_basis_expansions.
+    '''
     def my_local_monomials(op, point):
         dop = DifferentialOperator(op)
         struct = Point(point, dop).local_basis_structure()
@@ -164,87 +72,72 @@ def compute_initial_decomp(op, first_coefficients):
     return proj
 
 
-def handle_root(op, root, ini):
+def handle_monomial(zeta, alpha, k, order):
+    '''
+    Compute an asymptotic expansion of the coefficients of
+    (z-zeta)^alpha * (log (z-zeta))^k
+    up to `order` terms.
+    '''
+    if k == 0:
+        return (-zeta)^alpha * asymptotic_expansions.SingularityAnalysis('n',
+                                                zeta=zeta,
+                                                alpha=-alpha,
+                                                precision=order)
+    return (-zeta)^alpha * sum(binomial(k, i) * log(-1/zeta)^(k-i) * asymptotic_expansions.SingularityAnalysis('n',
+                                                zeta=zeta,
+                                                alpha=-alpha,
+                                                beta=i,
+                                                precision=order) for i in range(1, k+1))
+
+
+def handle_root(op, root, ini, order, precision):
+    '''
+    Compute the contribution to asymptotic expansion of the coefficients f_n
+    of a solution f to a given differential operator `op`, caracterized by
+    a list `ini` of first coefficients in expansion at 0,
+    in the neighbourhood of `root`.    
+    '''
     trans_matrix = op.numerical_transition_matrix([0, root],
-                                                  eps=EPS,
+                                                  eps=precision,
                                                   assume_analytic=True)
     coeffs_in_local_basis = trans_matrix * vector(ini)
 
-    local_expansions = my_expansions(op, root, order=ORDER)
+    local_expansions = my_expansions(op, root, order=order)
 
-    new_monomials = [GeneralMonomial(lambda_i * c, zeta, alpha, m)
-                     for terms in local_expansions
-                     for lambda_i, (c, zeta, alpha, m) in zip(coeffs_in_local_basis, terms)
-                     if alpha not in NN or m]  # exclude the polynomial case
-    if not new_monomials:
-        print('got no new monomial in', root)
-
-    return new_monomials
+    return [lambda_i * c * handle_monomial(root, alpha, m, order)
+                     for lambda_i, expansion in zip(coeffs_in_local_basis, local_expansions)
+                     for (c, _, alpha, m) in expansion
+                     if c != 0 and (alpha not in NN or m > 0)]  # exclude the polynomial case
 
 
-def extract_asymptotics(op, first_coefficients):
+def extract_asymptotics(op,
+                        first_coefficients,
+                        z,
+                        order=DEFAULT_ORDER,
+                        precision=DEFAULT_PRECISION):
+    '''
+    Compute an asymptotic expansion of a solution to the differential operator `op`
+    specified by its first coefficients `first_coefficients`, with
+    constants certified up to arbitrary precision, and up to any desired order.
+
+    Assuming `z` is the variable used in `op`.
+    `order` controls the order of the expansion.
+    `precision` controls the disired amount of certified precision for the constants.
+    '''
     ini = compute_initial_decomp(op, first_coefficients)
-
     leading_roots = op.leading_coefficient().roots(QQbar)
-    # TODO check 0 is reg or sing reg
+    # TODO check 0 is reg or sing reg ?
 
-    found_a_sing = False
     all_monomials = []
     for module, roots in group_by_module(leading_roots):
-        roots = list(roots)
         if module == 0:
             continue
 
         for root, multiplicity in roots:
-
             if not is_regular_singular_point(root, multiplicity, z, op):
                     raise ValueError('Got an irregular singular point. Stopping here')
+            all_monomials += handle_root(op, root, ini, order, precision)
 
-            new_monomials = handle_root(op, root, ini)
-            all_monomials += new_monomials
-
-            if any(mon.is_singular() and mon.c.is_nonzero()
-                   for mon in new_monomials):
-                found_a_sing = True
-
-        if found_a_sing:
-            all_monomials.sort(reverse=True)
-            return sum((mon.asymptotic_symbolic() for mon in all_monomials), start=0)
-
-
-def test_is_regular_singular_point():
-    Pols.<z> = PolynomialRing(QQ)
-    Diff.<Dz> = OreAlgebra(Pols)
-
-    op = (4*z^2 - z) * Dz^2 + (14 * z - 2) * Dz + 6
-    assert is_regular_singular_point(0, 1, z, op)
-    assert is_regular_singular_point(1/4, 1, z, op)
-
-    op2 = (4*z^3 - z^2) * Dz^2 + (14 * z - 2) * Dz + 6
-    assert not is_regular_singular_point(0, 2, z, op2)
-    assert is_regular_singular_point(1/4, 1, z, op2)
-
-    op3 = (z)^4 * (z-1)^5 * Dz^3 + (z^2) * (z - 1) * Dz
-    assert is_regular_singular_point(0, 4, z, op3)
-    assert not is_regular_singular_point(1, 5, z, op3)
-
-    op4 = (z-1/4)^8 * (z-1/5)^12 * Dz^9 + (z - 1/4)^4 * Dz^5 + 1
-    assert is_regular_singular_point(1/4, 8, z, op4)
-    assert not is_regular_singular_point(1/5, 12, z, op4)
-
-
-if __name__ == '__main__':
-    test_is_regular_singular_point()
-
-    #####
-
-    Pols.<z> = PolynomialRing(QQ)
-    Diff.<Dz> = OreAlgebra(Pols)
-
-    # random walks in a half plane
-    op = (4*z^2 - z)*Dz^2 + (14*z - 2)*Dz + 6
-    print(extract_asymptotics(op, [1, 3]))
-
-    # random walks in quadrant
-    op = (16*z^4 - z^2)*Dz^3 + (128*z^3 + 8*z^2 - 6*z)*Dz^2 + (224*z^2 + 28*z - 6)*Dz + 64*z + 12
-    print(extract_asymptotics(op, [1,2,6,18]))
+        if all_monomials:
+            return sum(all_monomials)
+    raise ValueError('No singularity was found')
