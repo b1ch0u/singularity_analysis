@@ -2,18 +2,13 @@
 
 \begin{document}
 
-\section{Transfer theorems}
+\section{Singularity analysis and transfer theorem}
 
-%All the following results come, directly or not, from \cite{Flajolet1990}.
+In the previous sections, we have seen that a holonomic function $f$ admits, in the neighbourhood of any singularity, an asymptotic expansion of the form \eqref{general_structure_form}.
 
-%\begin{thm}{Main transfer theorem}
-%	Let $f = \sum f_n z^n$ be analytic in some open disk around the origin except for a single dominant singularity $\zeta$ and points in the ray	$R_\zeta = \{t \zeta : t \geq 1 \}$.
-%	
-%	If $f$ has a convergent expansion of the form \eqref{general_structure_form} in a disk centred at $\zeta$ minus $R_\zeta$ and $f(z) \sim C {\left( 1 - \frac{z}{\zeta} \right)}^\alpha {\left(\log \left( 1 - \frac{z}{\zeta} \right)\right)}^m$ with $\alpha \not\in \mathbb{N}$,	
-%	then
-%	
-%	$$f_n \sim C {\zeta}^{-n} \frac{n^{-\alpha - 1}}{\Gamma(-\alpha)} {(\log n)}^m$$
-%\end{thm}
+In this section, we show how to compute an asymptotic expansion of the coefficients of these functions, and present a \emph{transfer theorem} allowing one to directly deduce an asymptotic expansion of $f$.
+
+\section{Singularity analysis}
 
 \begin{thm}{Polynomial case}
 	If $\alpha \in \mathbb{N}$, then $[z^n]{\left(1 - \frac{z}{\zeta}\right)}^\alpha = 0$ for $n > k$

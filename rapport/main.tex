@@ -60,12 +60,42 @@ sorting=ynt]{biblatex}
 % floating figures with figure[H]
 \usepackage{float}
 
+\usepackage[ruled, vlined, boxruled]{algorithm2e}
+
 \usepackage[most]{tcolorbox}
 
+\usepackage{minted}
 
 \usepackage{hyperref}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\definecolor{codebggray}{rgb}{0.95,0.95,0.95}
+
+\tcbuselibrary{minted}
+
+\newtcblisting{pyblock}[1][]{%
+	colback=codebggray,
+	listing only,
+	minted options={
+		fontsize=\small,
+		linenos=true,
+		tabsize=4,
+		numbersep=2mm,
+		autogobble,
+	},
+	minted language=python,
+	breakable,
+	enhanced,
+	overlay={%
+		\begin{tcbclipinterior}
+			\fill[gray!25] (frame.south west) rectangle ([xshift=4mm]frame.north west);
+		\end{tcbclipinterior}
+	}
+	#1
+}
+
+\newcommand{\py}[1]{\mintinline{python}{#1}}
 
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 
@@ -235,10 +265,12 @@ sorting=ynt]{biblatex}
 
 		Nowadays, powerful techniques have been developed, enabling one to study a vast amount of combinatorial constructions with standard procedures. In fact, most of the steps involved have now been separately implemented, for instance in the \verb|ore_algebra| module of \textit{SageMath}.
 
-		One very general case of application of these techniques is the \textit{D-Finite} case.
+		One frequent case of application of these techniques is the \textit{D-Finite} case, where the generating series of $(a_n)$ is characterized by a differential equation with polynomial coefficients, and initial values of the $a_i$s.
 
-		This internship is devoted to understanding and effectively programming a complete combination of these techniques in \textit{SageMath}, in the D-Finite case.
+		This internship is devoted to understanding and effectively programming a combination of these techniques in \textit{SageMath}, in the D-Finite case.
 		In the end, one should be able to type in a differential equation associated to $a_n$, and our code shall return an asymptotic expansion of $a_n$, up to any desired order.
+		
+		The novelty resides in the merging of several existing functions used in different parts of the analysis, associated to the computation of explicit constants. % TODO
 	\end{minipage}
 \end{center}
 \vfill % equivalent to \vspace{\fill}
@@ -248,6 +280,7 @@ sorting=ynt]{biblatex}
 \subfile{sections/introduction}
 \subfile{sections/math_bg}
 \subfile{sections/implementation}
+\subfile{sections/conclusion}
 \printbibliography
 
 \end{document}

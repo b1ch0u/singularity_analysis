@@ -1,6 +1,3 @@
-from sage.symbolic.ring import SR
-from sage.rings.asymptotic.growth_group import GrowthGroup, ExponentialGrowthGroup
-
 from ore_algebra import *
 
 from ore_algebra.analytic.differential_operator import DifferentialOperator
@@ -8,7 +5,7 @@ from ore_algebra.analytic.local_solutions import (log_series, LocalBasisMapper,
                                                   simplify_exponent, LogMonomial)
 from ore_algebra.analytic.path import Point
 
-from utils import *
+from utils import group_by_module
 
 
 DEFAULT_PRECISION = 1e-10
@@ -45,7 +42,7 @@ def my_expansions(op, point, order=None):
                 sol.leftmost + n,
                 k)
                 for n, vec in enumerate(sol.value)
-                for k, c in reversed(list(enumerate(vec)))]
+                for k, c in reversed(list(enumerate(vec)))]  # TODO if c != 0
             for sol in sols]
 
 
@@ -102,12 +99,12 @@ def handle_root(op, root, ini, order, precision):
                                                   assume_analytic=True)
     coeffs_in_local_basis = trans_matrix * vector(ini)
 
-    local_expansions = my_expansions(op, root, order=order)
+    local_expansions = my_expansions(op, root, order=order)  # TODO eviter de refaire le calcul deja fait dans transition_matrix
 
-    return [lambda_i * c * handle_monomial(root, alpha, m, order)
+    return [lambda_i * c * handle_monomial(root, alpha, m, order)  # reduce order when not necessary
                      for lambda_i, expansion in zip(coeffs_in_local_basis, local_expansions)
                      for (c, _, alpha, m) in expansion
-                     if c != 0 and (alpha not in NN or m > 0)]  # exclude the polynomial case
+                     if c != 0 and (alpha not in NN or m > 0)]
 
 
 def extract_asymptotics(op,

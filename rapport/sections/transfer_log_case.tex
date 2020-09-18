@@ -2,11 +2,11 @@
 
 \begin{document}
 
-\subsection{Transfer theorem with a $\log$}
+\subsection{Complete scale}
 
-We closely follow \cite{Jungen1931} in this section.
+In this section, we closely follow \cite{Jungen1931}.
 
-\begin{prop}{}
+\begin{lemma}{}
 	Let $k \in \mathbb{N}^*$ and $f = \sum f_n z^n$ with
 	$$
 	f(z) = {(1 - z)}^{-k}
@@ -15,16 +15,19 @@ We closely follow \cite{Jungen1931} in this section.
 	$$
 	f_n = \frac{n^{k - 1}}{\Gamma(k)} \left[1 + \frac{k(k-1)}{2n} + \dots + \frac{\Gamma(k)}{n^{k-1}}\right]
 	$$
-\end{prop}
-\begin{proof}
+	
+	\tcblower
+
 	Start with
 	$${(1 - z)}^{-1} = \sum z^n$$
 	Now differentiating that relation $k - 1$ times, we get
 	$$
-	(k-1)! {(1-z)}^{-k} = \sum \frac{(n + s -1)!}{n!}z^n
+	(k-1)! {(1-z)}^{-k} = \sum \frac{(n + k -1)!}{n!}z^n
 	$$
-	Therefore $f_n = \frac{1}{(k-1)!} (n+1)(n+2)\dots(n+s-1)$, and the result follows by developing the product and grouping by powers of $n$.
-\end{proof}
+	Therefore $f_n = \frac{1}{(k-1)!} (n+1)(n+2)\dots(n+k-1)$, and the result follows by developing the product and grouping by powers of $n$.
+\end{lemma}
+
+The following three results are quoted from \cite{Jungen1931} without proof. For a reference, one may consult \cite{knopp1928}. They shall be useful in the proof of theorem \ref{thm_expansion_log} to assert the domains of validity of the computed expansions.
 
 \begin{lemma}{}\label{jungen_lemma_1}
 	Let $\phi(z)$ admit an asymptotic expansion
@@ -40,7 +43,7 @@ We closely follow \cite{Jungen1931} in this section.
 \end{lemma}
 
 \begin{lemma}{}\label{jungen_lemma_2}
-	Let $\varphi(z)$ be analytic uniformly in the form \eqref{asymptotic_expansion_form} on a half band
+	Let $\varphi(z)$ be analytic in the form \eqref{asymptotic_expansion_form} on a half band
 	\begin{equation}\label{band_form}
 	\begin{cases}
 		\Re(z) > a\\
@@ -49,14 +52,14 @@ We closely follow \cite{Jungen1931} in this section.
 	\end{equation}
 	for $a$ and $b$ arbitrary positive real numbers.
 	
-	Then $e^{\varphi(z)}$ can also be uniformly expanded, over the same band:
+	Then $e^{\varphi(z)}$ can also be expanded, over the same band:
 	\[
 	e^{\varphi(z)} \sim e^{c_0} \left(1 + \frac{c_1}{z} + \dots\right)
 	\]
 \end{lemma}
 
 \begin{lemma}{}\label{jungen_lemma_3}
-	Let $\varphi(z)$ be analytic and uniformly expandable in the form \eqref{asymptotic_expansion_form} over a band \eqref{band_form}, we also have
+	Let $\varphi(z)$ be analytic and expandable in the form \eqref{asymptotic_expansion_form} over a band \eqref{band_form}, we also have
 	\[
 	\varphi'(z) \sim -\frac{c_1}{z^2} - \frac{2c_2}{z^2} - \dots
 	\]
@@ -84,14 +87,15 @@ We closely follow \cite{Jungen1931} in this section.
 	\log \Gamma(z) &\sim \psum{n=1}^\infty \frac{B_{2n}}{2n(2n-1)z^{2n-1}}\\
 	&\sim \frac{1}{2} \log(2\pi) + \left(z + \frac{1}{2}\right) \log (z) - z + \frac{1}{12z} - \frac{1}{360z^2} + \dots
 	\end{align*}
+	where $B_n$ is the $n$-th Bernoulli number.
 	
 	Then by lemma \ref{jungen_lemma_2}
 	\[
 	\Gamma(z) = {\left(\frac{z}{e}\right)}^z \cdot z^{-1/2} \cdot \varphi(z)
 	\]
-	where $\varphi(z)$ can be uniformly expanded in asymptotic series over any half-band of type \eqref{band_form}.
+	where $\varphi(z)$ can be expanded in asymptotic series over any half-band of type \eqref{band_form}.
 	
-	Now, derivating $i$ times, we get
+	Now, differentiating $i$ times, we get
 	\begin{equation*}
 	\Gamma^{(i)}(z) = {\left(\frac{z}{e}\right)}^z z^{-1/2}
 	\left[{(\log z)}^i \varphi_{i,0}(z) + \dots + \varphi_{i,i}(z) \right]
@@ -110,7 +114,7 @@ We closely follow \cite{Jungen1931} in this section.
 	\]
 \end{proof}
 
-\begin{thm}{Transfer theorem in the integer case}
+\begin{thm}{Expansion theorem in the $\log$ case}\label{thm_expansion_log}
 	Let $a \in \mathbb{C}$ and $k \in \mathbb{N}^*$.
 	
 	Let
@@ -129,30 +133,39 @@ We closely follow \cite{Jungen1931} in this section.
 	\[
 	\phi_i \sim c_{i, 0} + \frac{c_{i, 1}}{n} + \frac{c_{i, 2}}{n^2} + \dots
 	\]
+	and the constants $c_{i, j}$ can be explicitly computed.
 \end{thm}
 
 \begin{proof}
-	Assume $a \not\in \mathbb{N}$. We can define $$\phi_0 : z \mapsto \Gamma(-a) {(1 - z)}^{-a}
-	= \psum{n = 0}^\infty \frac{\Gamma(a + n)}{n!}$$
-	By differentiating $i$ times with respect to $a$, we get
+	Assume $a \not\in \mathbb{N}$. We can define
+	$$\phi_0 : z \mapsto \Gamma(-a) {(1 - z)}^{-a}
+	= \psum{n = 0}^\infty \frac{\Gamma(n - a)}{n!} z^n$$
+	
+	By differentiating $i$ times with respect to $a$, we get $\frac{d^i}{da} \Gamma(-a) = {(-1)}^i \Gamma^{(i)}(-a)$, and
+	$\frac{d^i}{da} {(1 - z)}^{-a}
+	= \frac{d^i}{da} e^{-a \log(1-z)}
+	= \frac{d^i}{da} e^{a \left(\log \frac{1}{1-z}\right)}
+	={\left(\log \frac{1}{1-z}\right)}^i {(1 - z)}^{-a}$
+	so by Leibniz' rule:
+	
 	\begin{equation*}
 		\phi_i := \frac{d^i}{da^i} \phi_0 =
-		{(1 - z)}^{-a} \psum{j = 0}^i {i \choose j} \Gamma^{(j)}(-a) {\left(\log \frac{1}{1-z}\right)}^{1-j} 
+		{(1 - z)}^{-a} \psum{j = 0}^i {i \choose j} {(-1)}^j \Gamma^{(j)}(-a) {\left(\log \frac{1}{1-z}\right)}^{i-j}
 	\end{equation*}
 	
-	Now, when $i$ takes successively the values $0, \dots, k$, we get a triangular system of linear equations with respect to the functions ${(1-z)}^{a} {\left(\log \frac{1}{1-z}\right)}^i$, the solution of which has the form
-	\[
+	Now, when $i$ takes successively the values $0, \dots, k$, we get a triangular system of linear equations of unknowns the functions ${(1-z)}^{a} {\left(\log \frac{1}{1-z}\right)}^i$, the solution of which has the form
+	\begin{equation}\label{general_scale_devt}
 	{(1-z)}^{a} {\left(\log \frac{1}{1-z}\right)}^k
 	= \frac{1}{\Gamma(-a)} \left[ \phi_k(z) + d_{k, k - 1} \phi_{k-1}(z) + \dots + d_{k, 0} \phi_0(z) \right]
-	\]
+	\end{equation}
 	where the coefficients $d_{i, j}$ are explicitly computable and only depend on $i$ and $j$.
 	
 	Now, by definition of the $\phi_i$s, we have for all $i$
 	\[
-	\phi_i(z) = \psum{j = 0}^\infty \frac{\Gamma^{(i)}(n - a)}{n!}
+	\phi_i(z) = {(-1)}^i \psum{n = 0}^\infty \frac{\Gamma^{(i)}(n - a)}{n!} z^n
 	\]
 	
-	By expanding into Taylor series, this leads to the following equality
+	By expanding equation \eqref{general_scale_devt} into Taylor series, this leads to the following equality
 	\[
 	f_n = \frac{1}{n! \Gamma(-a)} \left[
 	\Gamma^{(k)}(n - a) + d_{k, k-1} \Gamma^{(k-1)}(n - a)

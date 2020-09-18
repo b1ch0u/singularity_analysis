@@ -10,25 +10,25 @@
 	Let $f$ be a differentiable function. We note $f^{(k)}$ its $k$-th derivative.
 \end{definition}
 
-\begin{definition}{{Open balls, closed balls, circles}}
-	For $z_0 \in \mathbb{C}$ and $r > 0$ we define
-	\begin{description}
-		\item[$\mathcal{B} (z_0, r)$] the open ball of center $z_0$ and radius~$r$ as
-		\[
-		\mathcal{B} (z_0, r) := \{z \in \mathbb{C} : |z - z_0| < r \}
-		\]
-		
-		\item[$\mathcal{B}_f (z_0, r)$] the closed ball of center $z_0$ and radius~$r$ as
-		\[
-		\mathcal{B}_f (z_0, r) := \{z \in \mathbb{C} : |z - z_0| \leq r \}
-		\]
-		
-		\item[$\mathcal{C} (z_0, r)$] the circle of center $z_0$ and radius~$r$ as
-		\[
-		\mathcal{C} (z_0, r) := \{z \in \mathbb{C} : |z - z_0| = r \}
-		\]
-	\end{description}
-\end{definition}
+%\begin{definition}{{Open balls, closed balls, circles}}
+%	For $z_0 \in \mathbb{C}$ and $r > 0$ we define
+%	\begin{description}
+%		\item[$\mathcal{B} (z_0, r)$] the open ball of center $z_0$ and radius~$r$ as
+%		\[
+%		\mathcal{B} (z_0, r) := \{z \in \mathbb{C} : |z - z_0| < r \}
+%		\]
+%		
+%		\item[$\mathcal{B}_f (z_0, r)$] the closed ball of center $z_0$ and radius~$r$ as
+%		\[
+%		\mathcal{B}_f (z_0, r) := \{z \in \mathbb{C} : |z - z_0| \leq r \}
+%		\]
+%		
+%		\item[$\mathcal{C} (z_0, r)$] the circle of center $z_0$ and radius~$r$ as
+%		\[
+%		\mathcal{C} (z_0, r) := \{z \in \mathbb{C} : |z - z_0| = r \}
+%		\]
+%	\end{description}
+%\end{definition}
 
 \section{Reminders from complex analysis}
 
@@ -88,9 +88,9 @@ TODO
 
 \paragraph{A few identities}
 
-For a reference over the following definitions and identities, the reader is referred to \cite{Brown1996}.
+For a reference on the following definitions and identities, the reader is referred to \cite{Brown1996}.
 
-From now on, except explicitly stated otherwise, $\log z$ and $\arg z$ will stand for the principal determination of the complex logarithm and argument.
+From now on, except when explicitly stated otherwise, $\log z$ and $\arg z$ will stand for the principal determination of the complex logarithm and argument.
 
 \begin{definition}{{$N_+, N_-$}}
 	Let $z_1, z_2 \in \mathbb{C}^*$. Define $N_+(z_1, z_2)$ and $N_-(z_1, z_2)$ with
@@ -125,7 +125,7 @@ From now on, except explicitly stated otherwise, $\log z$ and $\arg z$ will stan
 \end{prop}
 
 \begin{cor}{}\label{cor_log_identities}
-	Let $x \in \mathbb{R}^{+*}$ and $z,t \in \mathbb{C}^*$. Then $\arg(x) = 0$, so all classical identities over real numbers extend identically:
+	Let $x \in \mathbb{R}^{+*}$ and $z,t \in \mathbb{C}^*$. Then $\arg(x) = 0$, so all classical identities over the real numbers extend identically:
 	\begin{align*}
 	\log (xz) &= \log x + \log z\\
 	\log \left(\frac{x}{z}\right) &=  \log x - \log z\\
@@ -157,7 +157,7 @@ From now on, except explicitly stated otherwise, $\log z$ and $\arg z$ will stan
 
 \subfile{sections/basics_eq_diff}
 
-\section{Singularities location}
+\section{Location of Singularities}
 
 %Let $g = \sum g_n z^n$ a formal sum.
 %
@@ -235,7 +235,7 @@ f(z)\\
 {(z - \zeta)}^{r - 1} f^{(r - 1)}(z)
 \end{pmatrix}$ (that is, $Y_i : z \mapsto {(z - \zeta)}^{i - 1} f^{(i - 1)}(z)$).
 
-It is immediate that for all $i \leq r - 1$, we have $${(z - \zeta)} Y_i' = (i-1)Y_i + Y_{i + 1}$$ and
+For all $i \leq r - 1$, we have $${(z - \zeta)} Y_i' = (i-1)Y_i + Y_{i + 1}$$ and
 $$ {(z - \zeta)} Y	_r' = (r - 1)Y_r - {(z - \zeta)} a_{r-1} Y_{r - 1} - \dots - {(z - \zeta)}^r a_0 Y_1 $$
 
 Then, equation \eqref{basic_eq_diff} is easily seen to be equivalent to
@@ -258,7 +258,7 @@ where $A_\zeta(z)$ is an $r \times r$ matrix.
 \end{definition}
 
 \begin{definition}{{Indicial polynomial, $I_\zeta$}}
-	The characteristic polynomial of $A_\zeta(\zeta)$ is named the \emph{indicial polynomial} of equation \eqref{basic_eq_diff} and \eqref{eq_diff_matrix_form} at $\zeta$, written $I_\zeta$.
+	The characteristic polynomial of $A_\zeta(\zeta)$ is named the \emph{indicial polynomial} of equation \eqref{basic_eq_diff} and \eqref{eq_diff_matrix_form} at $\zeta$, denoted $I_\zeta$.
 \end{definition}
 
 %Before defining indicial polynomials in all generality, let us begin with a simple example, allowing one to get a grasp at where the definition comes from.
@@ -304,7 +304,7 @@ where $A_\zeta(z)$ is an $r \times r$ matrix.
 \begin{thm}{General structure theorem}
 	Let $\zeta$ be a regular singular point of \eqref{basic_eq_diff}. No assumption is made on the roots of $I_\zeta$.
 	
-	Then, in a slit neighbourhood of $\zeta$, there exists a basis of solutions with functions of the form
+	Then, in a slit neighbourhood of $\zeta$, there exists a basis of solutions of the form
 	\begin{equation}\label{general_structure_form}
 	{(z - \zeta)}^{\theta_j} {(\log (z - \zeta))}^m H_j (z - \zeta)
 	\end{equation}
@@ -320,7 +320,8 @@ where $A_\zeta(z)$ is an $r \times r$ matrix.
 	|f_n| < C^n\\
 	lcd(f_1, \dots, f_n) < C^n
 	\end{cases}
-	\end{align*}	
+	\end{align*}
+	where $lcd(f_1, \dots, f_n)$ is the least common denominator of $f_1, \dots, f_n$.
 \end{definition}
 
 \begin{thm}{André-Chudnovsky-Katz Theorem}

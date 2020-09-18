@@ -4,6 +4,72 @@
 
 \chapter{Implementation}
 
+Section \ref{section_implem_structure} presents the global structure of the algorithm, then details some parts. Section \ref{section_implem_tests} briefly presents the tests. Finally, section \ref{section_implem_perf} discusses performance aspects.
+
+\section{Structure}\label{section_implem_structure}
+
+We first present here the main algorithm, and the important sub-algorithms. The implementation is mostly transparent, except for a few optimizations like computing the local solutions in 0 only once.
+
+\begin{algorithm}[H]
+	\caption{Main algorithm}
+	\SetAlgoLined
+	\KwIn{$f$ defined by a $a_n \frac{d^n}{dz^n}f + \dots a_0 = 0$, initial coefficients~$f_0, \dots, f_n$, order and precision}
+	\KwOut{Asymptotic expansion of $f$ with at least order terms, and coefficients with given precision}
+	
+	\Begin{
+		
+		Compute the roots of $a_n$ and group them by increasing module.
+		
+		Initialise the sum $S$ of contributions to the asymptotic expansion.
+		
+		\While{No contribution confirmed}{
+			Load next group G of roots
+			
+			\ForEach{root $\rho \in$ G}{
+				Compute the contribution of $\rho$.	
+			}
+			
+			Sum contributions of G and add to $S$
+		}
+		
+		\KwRet{S}
+	}
+	
+\end{algorithm}
+
+To compute the contribution of a specific root, we use the following algorithm
+
+\begin{algorithm}[H]
+	\caption{Computing the contribution of a root}
+	\SetAlgoLined
+	\KwIn{All entries of the main algorithm, and a specific root $\rho$}
+	\KwOut{Contribution of $\rho$ to the asymptotic expansion of $f$}
+	
+	\Begin{
+		Compute a basis $\mathcal{B}_0$ of solutions in 0, and decompose $f$ in $\mathcal{B}_0$.
+		
+		Compute a basis $\mathcal{B}_\rho$ of solutions in $\rho$, and decompose $f$ in $\mathcal{B}_\rho$.
+		
+		Initialize a sum S of terms contributions.
+		
+		\ForEach{term T in the local expansions}{
+			Compute an asymptotic expansion of the Taylor coefficients of T.
+			
+			Add to S.
+		}
+	}
+	\KwRet{S}
+\end{algorithm}
+
+
+
+
+\section{Tests}\label{section_implem_tests}
 TODO
+
+\section{Performance}\label{section_implem_perf}
+TODO
+
+
 
 \end{document}

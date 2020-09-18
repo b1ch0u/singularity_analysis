@@ -6,7 +6,7 @@
 
 \subsection{Scalar and system equations}
 
-\paragraph{Scalar equations}
+\paragraph{Differential equations}
 
 The equation
 \begin{equation}\label{scalar_eq}
@@ -14,7 +14,7 @@ The equation
 \end{equation}
 where the $a_i$ are holomorphic is said to be a \emph{scalar} (differential) equation.
 
-\paragraph{System equations}
+\paragraph{Differential systems}
 
 The equation
 \begin{equation}\label{system_eq}
@@ -62,15 +62,14 @@ The following classical theorem is admitted.
 \begin{thm}{Cauchy's existence and uniqueness theorem}\label{thm_cauchy}
 	Let $n$ an integer. Let also $A(z)$ an $n \times n$-matrix and $f(z)$ an $n$-dimensional vector, both holomorphic in some simply connected region $\Omega \subset \mathbb{C}$.
 	
-	Then the equation
+	Then, for any $z_0 \in \Omega$ and $y_0 \in \mathbb{C}^n$, the equation
 	\begin{equation}\label{inhom_system_eq}
-	Y' = A(z) Y + f(z)
+	Y' = A(z) Y
 	\end{equation}
 	has a unique solution such that
 	\begin{equation*}
 		y(z_0) = y_0
 	\end{equation*}
-	where $z_0 \in \Omega$ and $y_0 \in \mathbb{C}^n$.
 	
 	That solution is holomorphic on $\Omega$.
 \end{thm}

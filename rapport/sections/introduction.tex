@@ -22,23 +22,35 @@ Two principles, stated in \cite{Flajolet2009}, shall guide one's search :
 \end{itemize}
 %Almost everything that we present here is, to some degree, borrowed from \cite{Flajolet2009}. Flajolet and Sedgewick amply describe these techniques, along with many examples.
 
+\section{State of the art}
+
+%It has been known since TODO that 
+
+In 1990, Flajolet and Odlyzko \cite{FlajoletOdlyzko1990} proved transfer theorems, that allow one to 
+TODO %TODO
+
+
 \section{Mathematical sketch}
 
 \paragraph{From a combinatorial problem to a differential equation}
 Powerful techniques exist to translate a combinatorial construction into a \emph{D-finite} relation, namely a differential equation with polynomial coefficients.
 We will not cover those techniques here. If interested, one is referred to \cite{Flajolet2009}.
 
-From now on, we will assume that a non trivial D-finite relation satisfied by $f$ is given, which is 
+From now on, we will assume that a non trivial D-finite relation satisfied by $f$ is given, which is a relation of the form
 \begin{equation}\label{basic_eq_diff}
 y^{(r)} + \frac{p_{r-1}}{p_r} y^{(r - 1)} + \dots + \frac{p_0}{p_r} y = 0
 \end{equation}
 where $p_0, \dots, p_r \in \mathbb{C}[X]$.
 
+\begin{definition}{D-finite (holonomic) function}
+	A function satisfying a D-finite relation will be said D-finite itself, or \emph{holonomic}.
+\end{definition}
+
 \paragraph*{Singularities location}
 We will first see that $f$ may only have singularities at roots of $p_r$. Thereafter, we define $\Xi := \{ \text{roots of } p_r\}$. If $f$ has at least one singularity, minimal ones (by module) are called \emph{dominant singularities}.
 
 \paragraph*{Local basis structure theorems}
-Following the definition of \emph{regular singular points}, where some technical condition is satisfied, we prove that, in a \emph{slit} neighbourhood of any such point $\zeta$, equation \eqref{basic_eq_diff} admits a local basis of solutions of the form $${(z - \zeta)}^{\theta_j} \log^m (z - \zeta) H_j (z - \zeta)$$ with $H_j$ analytic at 0. This basis can be explicitly computed. 
+Following the definition of \emph{regular singular points}, where some technical condition is satisfied, it can be proved that, in a \emph{slit} neighbourhood of any such point $\zeta$, equation \eqref{basic_eq_diff} admits a local basis of solutions of the form $${(z - \zeta)}^{\theta_j} \log^m (z - \zeta) H_j (z - \zeta)$$ with $H_j$ analytic at 0. This basis can be explicitly computed. 
 
 \paragraph*{Transfer theorems}
 We then investigate \emph{transfer theorems}. Assume $f$ has at least one singularity, and  all dominant singularities are regular singular points. After expressing $f$ in the previous form around all dominant singularities, transfer theorems allow one to compute an asymptotic expansion of $f_n$.
@@ -46,6 +58,44 @@ We then investigate \emph{transfer theorems}. Assume $f$ has at least one singul
 
 \section{Implementation overview}
 
-TODO
+The implementation is in SageMath, mostly (and vastly) relying on the \verb|ore_algebra| and \verb|AsymptoticRing| modules.
+
+\paragraph{\py{extract_asymptotics}}
+
+A function \py{extract_asymptotics} is implemented, with the following definition:
+
+\begin{pyblock}
+def extract_asymptotics(op,
+						first_coefficients,
+						z,
+						order=DEFAULT_ORDER,
+						precision=DEFAULT_PRECISION) -> expr
+\end{pyblock}
+
+For a holonomic function $f$, \py{extract_asymptotics} takes
+
+\begin{itemize}
+	\item A differential operator \py{op}, such that $op \cdot f = 0$
+	
+	\item A list \py{first_coefficients} of the first Taylor coefficients of $f$
+	
+	\item The variable \py{z} used in definition of \py{op}, only for technical reasons
+	
+	\item The desired \py{order} of the asymptotic expansion
+	
+	\item The desired certified \py{precision} for the constants
+\end{itemize}
+
+It returns an asymptotic expansion of the coefficients of $f$, up to the desired \py{order} and with constants certified at least with the given \py{precision}.
+
+\paragraph{Global structure}
+
+We first locate the roots of $p_r$, and group them by increasing module.
+
+Then, as long as no root has been \textit{proved} to be a singularity of $f$, we iterate through the groups and sum their contributions. A root of $p_r$ can indeed not always be proved to be a singularity of $f$ only by computing the coefficients of $f$ in the local basis: if one of these coefficients is precisely 0, successive approximations will never be able to distinguish it from 0, yet not proving either that it would be nil.
+
+Then for each root, we make use of \py{local_basis_expansions}, defined in the \py{ore_algebra} module. That function allows one to compute a local basis of solutions to \py{op}, along with their expansion up to any desired order. A call to \py{numerical_transition_matrix} then allows us to determine the expression of $f$ in that local basis, with constants certified to the desired \py{precision}.
+
+Calling \py{SingularityAnalysis} (a specially crafted function from the \py{asymptotic_ring} module) on each term appearing and summing the results finally yields the desired expansion.
 
 \end{document}
