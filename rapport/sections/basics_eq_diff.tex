@@ -4,6 +4,8 @@
 
 \section{Some differential equations theory}
 
+In this section, we will present the results that enable one study a differential equation of the form \eqref{basic_eq_diff}.
+
 \subsection{Scalar and system equations}
 
 \paragraph{Differential equations}
@@ -21,26 +23,26 @@ The equation
 	Y' = A(z) Y
 \end{equation}
 where $A(z)$ is an $n \times n$ matrix and $Y(z)$ is an $n$-dimensional vector
-is said to be a \emph{system} (differential) equation.
+is said to be a (differential) \emph{system of equations}.
 
 \paragraph{From scalar to system}
 
-The following transformation is a classical trick to transform a scalar equation into a system one:
+The following transformation is a classical trick to transform a scalar equation into a system:
 
 If $y$ is a solution to 
 \begin{equation*}\label{scalar_eqn}
-	y^{(r)} = a_{r - 1}(z) y^{(r - 1)} + \dots + a_0(z) y
+	y^{(r)}(z) = a_{r - 1}(z) y^{(r - 1)}(z) + \dots + a_0(z) y(z)
 \end{equation*}
 then
 $Y : z \mapsto \begin{pmatrix}
-y\\
-y'\\
+y(z)\\
+y'(z)\\
 \vdots \\
-y^{(n - 1)}
+y^{(n - 1)}(z)
 \end{pmatrix}$
 is a solution to
 \begin{equation*}
-	Y' = A(z)Y
+	Y' = A(z)Y'(z)
 \end{equation*} where
 \begin{equation*}
 A(z)=

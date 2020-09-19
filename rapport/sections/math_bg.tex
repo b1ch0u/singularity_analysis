@@ -223,22 +223,22 @@ For further treatment of this section, one is referred to \cite{Wasow1965} (chap
 
 \subsection{Another transformation}
 
-Let $\zeta \in \mathbb{C}$, $f$ be a solution of
+Let $\zeta \in \mathbb{C}$, $y$ such that
 
 \begin{equation*}
-	u^{(r)} + a_{r - 1}(z) u^{(r - 1)} + \dots + a_0(z) u = 0
+	y^{(r)} + a_{r - 1}(z) y^{(r - 1)} + \dots + a_0(z) y = 0
 \end{equation*}
 
 and define $Y : z \mapsto \begin{pmatrix}
-f(z)\\
+y(z)\\
 \vdots \\
-{(z - \zeta)}^{r - 1} f^{(r - 1)}(z)
-\end{pmatrix}$ (that is, $Y_i : z \mapsto {(z - \zeta)}^{i - 1} f^{(i - 1)}(z)$).
+{(z - \zeta)}^{r - 1} y^{(r - 1)}(z)
+\end{pmatrix}$ (that is, $Y_i : z \mapsto {(z - \zeta)}^{i - 1} y^{(i - 1)}(z)$).
 
 For all $i \leq r - 1$, we have $${(z - \zeta)} Y_i' = (i-1)Y_i + Y_{i + 1}$$ and
 $$ {(z - \zeta)} Y	_r' = (r - 1)Y_r - {(z - \zeta)} a_{r-1} Y_{r - 1} - \dots - {(z - \zeta)}^r a_0 Y_1 $$
 
-Then, equation \eqref{basic_eq_diff} is easily seen to be equivalent to
+Then, equation \eqref{basic_eq_diff} is equivalent to
 
 \begin{equation}\label{eq_diff_matrix_form}
 {(z - \zeta)}Y' = A_\zeta(z)Y
@@ -250,9 +250,9 @@ where $A_\zeta(z)$ is an $r \times r$ matrix.
 
 
 \begin{definition}{Regular singular points}
-	Let $f$ solution to equation \eqref{basic_eq_diff}.
+	Consider a differential equation (E) of the form \eqref{basic_eq_diff}.
 	
-	We say $\zeta$ is a \emph{regular singular} point of $f$ is singular in $\zeta$, and $\zeta$ is a pole of $\frac{p_i}{p_r}$ of order at most $r - i$, for all $i \in [0, r - 1]$.
+	We say that $\zeta$ is a \emph{regular singular} point of (E), and $\zeta$ is a pole of $\frac{p_i}{p_r}$ of order at most $r - i$, for all $i \in [0, r - 1]$.
 	
 	Equivalently, $\zeta$ is a regular singular point if $A_\zeta(z)$ is analytic in some neighbourhood of $\zeta$, when one writes $(z - \zeta)Y' = A_\zeta(z) Y$.
 \end{definition}

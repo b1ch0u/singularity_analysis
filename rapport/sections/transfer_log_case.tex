@@ -2,205 +2,36 @@
 
 \begin{document}
 
-\subsection{Complete scale}
+\section{Transfer theorems}
 
-In this section, we closely follow \cite{Jungen1931}.
+The content of this section is from \cite{Flajolet2009}, section VI.
 
-\begin{lemma}{}
-	Let $k \in \mathbb{N}^*$ and $f = \sum f_n z^n$ with
-	$$
-	f(z) = {(1 - z)}^{-k}
-	$$
-	Then for all $n$, we have
-	$$
-	f_n = \frac{n^{k - 1}}{\Gamma(k)} \left[1 + \frac{k(k-1)}{2n} + \dots + \frac{\Gamma(k)}{n^{k-1}}\right]
-	$$
-	
-	\tcblower
-
-	Start with
-	$${(1 - z)}^{-1} = \sum z^n$$
-	Now differentiating that relation $k - 1$ times, we get
-	$$
-	(k-1)! {(1-z)}^{-k} = \sum \frac{(n + k -1)!}{n!}z^n
-	$$
-	Therefore $f_n = \frac{1}{(k-1)!} (n+1)(n+2)\dots(n+k-1)$, and the result follows by developing the product and grouping by powers of $n$.
-\end{lemma}
-
-The following three results are quoted from \cite{Jungen1931} without proof. For a reference, one may consult \cite{knopp1928}. They shall be useful in the proof of theorem \ref{thm_expansion_log} to assert the domains of validity of the computed expansions.
-
-\begin{lemma}{}\label{jungen_lemma_1}
-	Let $\phi(z)$ admit an asymptotic expansion
-	\begin{equation}\label{asymptotic_expansion_form}
-	\varphi(z) \sim c_0 + \frac{c_1}{z} + \frac{c_2}{z^2} + \dots
-	\end{equation}
-	as $z$ goes to infinity following a half line $d$.
-	
-	Then for every constant $z_0$, we also have, asymptotically along $d$,
-	\[
-	\varphi(z_0 + z) \sim c_0 + \frac{c_1}{z} + \frac{-c_1 z_0 + c_2}{z^2} + \dots
-	\]
-\end{lemma}
-
-\begin{lemma}{}\label{jungen_lemma_2}
-	Let $\varphi(z)$ be analytic in the form \eqref{asymptotic_expansion_form} on a half band
-	\begin{equation}\label{band_form}
-	\begin{cases}
-		\Re(z) > a\\
-		\Im(z) \in ]-b, b[
-	\end{cases}
-	\end{equation}
-	for $a$ and $b$ arbitrary positive real numbers.
-	
-	Then $e^{\varphi(z)}$ can also be expanded, over the same band:
-	\[
-	e^{\varphi(z)} \sim e^{c_0} \left(1 + \frac{c_1}{z} + \dots\right)
-	\]
-\end{lemma}
-
-\begin{lemma}{}\label{jungen_lemma_3}
-	Let $\varphi(z)$ be analytic and expandable in the form \eqref{asymptotic_expansion_form} over a band \eqref{band_form}, we also have
-	\[
-	\varphi'(z) \sim -\frac{c_1}{z^2} - \frac{2c_2}{z^2} - \dots
-	\]
-	over any tighter band
-	\begin{equation}
-	\begin{cases}
-	\Re(z) > a\\
-	\Im(z) \in ]-b + \varepsilon, b + \varepsilon[
-	\end{cases}
-	\end{equation}
-\end{lemma}
-
-\begin{lemma}{}\label{lemma_quotient_gamma}
-	Let $i$ an integer, $n$ a natural number and $s \in \mathbb{C} \setminus \{-1, -2, \dots\}$.
-
-	Then there exists functions $\psi_{i, j}$ that can be expanded asymptotically, such that
-	\begin{equation}
-	\frac{\Gamma^{(i)}(n+s)}{\Gamma(n + 1)} = n^{s-1} [{(\log n)}^i \psi_{i, 0}(n) + \dots + \psi_{i, i}(n)]
-	\end{equation}
-\end{lemma}
-
-\begin{proof}
-	Start from Stirling's series for $\log \Gamma(z)$:
-	\begin{align*}
-	\log \Gamma(z) &\sim \psum{n=1}^\infty \frac{B_{2n}}{2n(2n-1)z^{2n-1}}\\
-	&\sim \frac{1}{2} \log(2\pi) + \left(z + \frac{1}{2}\right) \log (z) - z + \frac{1}{12z} - \frac{1}{360z^2} + \dots
-	\end{align*}
-	where $B_n$ is the $n$-th Bernoulli number.
-	
-	Then by lemma \ref{jungen_lemma_2}
-	\[
-	\Gamma(z) = {\left(\frac{z}{e}\right)}^z \cdot z^{-1/2} \cdot \varphi(z)
-	\]
-	where $\varphi(z)$ can be expanded in asymptotic series over any half-band of type \eqref{band_form}.
-	
-	Now, differentiating $i$ times, we get
-	\begin{equation*}
-	\Gamma^{(i)}(z) = {\left(\frac{z}{e}\right)}^z z^{-1/2}
-	\left[{(\log z)}^i \varphi_{i,0}(z) + \dots + \varphi_{i,i}(z) \right]
+\begin{definition}{{$\Delta(\phi, R)$}}
+	For any positive numbers $\phi$ and $R$ such that $R > 1$ and $\phi \in \left] 0, \frac{\pi}{2} \right[$, we define
+	\begin{equation*}\label{def_Delta}
+	\Delta(\phi, R) := \{z \mid |z| < R, z \neq 1 \text{ and } |\arg(z - 1) > \phi \}
 	\end{equation*}
-	where the functions $\varphi_{i,j}$ can be expanded into asymptotic series, by lemmas \ref{jungen_lemma_1} and \ref{jungen_lemma_3}.
 	
-	Therefore,
-	\begin{equation*}
-	\frac{\Gamma^{(i)}(n+s)}{\Gamma(n + 1)} =
-	{\left(\frac{n}{e}\right)}^{s - 1} \frac{{\left(1 + \frac{s}{n}\right)}^{n + s - 1/2}}{{\left(1 + \frac{1}{n}\right)}^{n + 1/2}}
-	\cdot \frac{{(\log(n + s))}^i \varphi_{i,0}(n+s) + \dots + \varphi_{i,i}(n+s)}{\varphi(n + 1)}
-	\end{equation*}
-	and we may finally define the functions $\psi_{i, j}$ such that
-	\[
-	\frac{\Gamma^{(i)}(n+s)}{\Gamma(n + 1)} = n^{s-1} [{(\log n)}^i \psi_{i, 0}(n) + \dots + \psi_{i, i}(n)]
-	\]
-\end{proof}
+	A domain $D$ such that there exists $\phi$ and $R$ as above and $D = \Delta(\phi, R)$ will be called a \emph{$\Delta$-domain}.
+	
+	A function that is analytic on some $\Delta$-domain will be called $\Delta$-analytic.
+\end{definition}
 
-\begin{thm}{Expansion theorem in the $\log$ case}\label{thm_expansion_log}
-	Let $a \in \mathbb{C}$ and $k \in \mathbb{N}^*$.
+\begin{thm}{Transfer theorem for $O$ and $o$}
+	Let $\alpha, \beta \in \mathbb{R}$ and $f$ be a $\Delta$-analytic function.
 	
-	Let
-	\[
-	f : z \mapsto {(1 - z)}^{a} {\left( \log \frac{1}{1 - z} \right)}^k
-	\]
-	then for large $n$ one has
-	\begin{align*}
-	f_n =
-	\begin{cases}
-	\frac{n^{-a-1}}{\Gamma(-a)} \psum{i = 0}^k {(\log n)}^i \phi_i(n) &\text{ if $a \not\in \mathbb{N}$}\\
-	{(-1)}^a k \Gamma(1 + a) n^{-a - 1} \psum{i = 0}^k {(\log n)}^i \phi_i(n) &\text{ if $a \in \mathbb{N}$}
-	\end{cases}
-	\end{align*}
-	where the functions $\phi_i$ admit asymptotic expansions of the form
-	\[
-	\phi_i \sim c_{i, 0} + \frac{c_{i, 1}}{n} + \frac{c_{i, 2}}{n^2} + \dots
-	\]
-	and the constants $c_{i, j}$ can be explicitly computed.
+	\begin{itemize}
+		\item If $f$ is such that, in the some neighbourhood of 1 and its $\Delta$-domain, one has
+		\[
+		f(z) = O \left( {(1-z)}^{-\alpha} {\left( \log \frac{1}{1 - z} \right)}^\beta \right)
+		\]
+		Then
+		\[
+		[z^n] f(z) = O\left(n^{\alpha - 1} (\log n)^\beta\right)
+		\]
+		
+		\item The same result holds, with $O$ replaced by $o$.
+	\end{itemize}
 \end{thm}
-
-\begin{proof}
-	Assume $a \not\in \mathbb{N}$. We can define
-	$$\phi_0 : z \mapsto \Gamma(-a) {(1 - z)}^{-a}
-	= \psum{n = 0}^\infty \frac{\Gamma(n - a)}{n!} z^n$$
-	
-	By differentiating $i$ times with respect to $a$, we get $\frac{d^i}{da} \Gamma(-a) = {(-1)}^i \Gamma^{(i)}(-a)$, and
-	$\frac{d^i}{da} {(1 - z)}^{-a}
-	= \frac{d^i}{da} e^{-a \log(1-z)}
-	= \frac{d^i}{da} e^{a \left(\log \frac{1}{1-z}\right)}
-	={\left(\log \frac{1}{1-z}\right)}^i {(1 - z)}^{-a}$
-	so by Leibniz' rule:
-	
-	\begin{equation*}
-		\phi_i := \frac{d^i}{da^i} \phi_0 =
-		{(1 - z)}^{-a} \psum{j = 0}^i {i \choose j} {(-1)}^j \Gamma^{(j)}(-a) {\left(\log \frac{1}{1-z}\right)}^{i-j}
-	\end{equation*}
-	
-	Now, when $i$ takes successively the values $0, \dots, k$, we get a triangular system of linear equations of unknowns the functions ${(1-z)}^{a} {\left(\log \frac{1}{1-z}\right)}^i$, the solution of which has the form
-	\begin{equation}\label{general_scale_devt}
-	{(1-z)}^{a} {\left(\log \frac{1}{1-z}\right)}^k
-	= \frac{1}{\Gamma(-a)} \left[ \phi_k(z) + d_{k, k - 1} \phi_{k-1}(z) + \dots + d_{k, 0} \phi_0(z) \right]
-	\end{equation}
-	where the coefficients $d_{i, j}$ are explicitly computable and only depend on $i$ and $j$.
-	
-	Now, by definition of the $\phi_i$s, we have for all $i$
-	\[
-	\phi_i(z) = {(-1)}^i \psum{n = 0}^\infty \frac{\Gamma^{(i)}(n - a)}{n!} z^n
-	\]
-	
-	By expanding equation \eqref{general_scale_devt} into Taylor series, this leads to the following equality
-	\[
-	f_n = \frac{1}{n! \Gamma(-a)} \left[
-	\Gamma^{(k)}(n - a) + d_{k, k-1} \Gamma^{(k-1)}(n - a)
-	+ \dots + d_{k, 0} \Gamma(n - a)
-	\right]
-	\]
-	
-	We now use lemma \ref{lemma_quotient_gamma} to conclude (recall that $n! = \Gamma(n + 1)$).
-
-	\begin{center}
-		***
-	\end{center}
-	
-	To deal with the case $a \in \mathbb{N}$, use the relation
-	\begin{align*}
-	{(1 - z)}^a {\left(\log \frac{1}{1 - z}\right)}^k
-	= &-a \int {(1 - z)}^{a - 1} {\left(\log \frac{1}{1 - z}\right)}^k\\
-	&+ k \int {(1 - z)}^{a - 1} {\left(\log \frac{1}{1 - z}\right)}^{k - 1}
-	\end{align*}
-	$a + 1$ times to reduce to the first case.
-\end{proof}
-
-%\psum{j = 0}^\infty \frac{F_j(\log n)}{n^k}
-%with $deg(F_j) \leq k-1$
-
-%\paragraph{majoration pour les termes supplémentaires}
-%Again by Cauchy's formula,
-%\[
-%f_n = \frac{1}{2i\pi} \int_{C} \frac{f(z)}{z^{n+1}} dz
-%\]
-%therefore
-%\begin{align*}
-%|f_n|	&\leq \left| \frac{1}{2i\pi} \int_{C} \frac{f(z)}{z^{n+1}} \right| dz\\
-%		&\leq \frac{1}{2\pi} \int_{C} \left| \frac{f(z)}{z^{n+1}} \right| dz\\
-%		&\leq \frac{1}{2\pi} \int_{C}
-%\end{align*}
 
 \end{document}
