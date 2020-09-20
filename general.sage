@@ -1,4 +1,4 @@
-from ore_algebra import *
+from ore_algebra import OreAlgebra
 
 from ore_algebra.analytic.differential_operator import DifferentialOperator
 from ore_algebra.analytic.local_solutions import (log_series, LocalBasisMapper,
