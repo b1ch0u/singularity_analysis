@@ -8,13 +8,13 @@ from ore_algebra.analytic.path import Point
 from utils import group_by_module
 
 
-DEFAULT_PRECISION = 1e-10
+DEFAULT_PRECISION = 1e-53
 DEFAULT_ORDER = 5
 
 
 def is_regular_singular_point(point, leading_mult, z, op):
     '''
-    Checks wether a point is a regular singular point of a differential operator.
+    Checks weather a point is a regular singular point of a differential operator.
     `leading_mult` is the multiplicity of `point` as a root
     of the leading coefficient of `op`.
     '''
@@ -26,23 +26,20 @@ def is_regular_singular_point(point, leading_mult, z, op):
     return True
 
 
-def my_expansions(op, point, order=None):
+def my_expansions(op, point, order):
     mypoint = Point(point, op)
-    dop = DifferentialOperator(op)
-    ldop = dop.shift(mypoint)
-    if order is None:
-        ind = ldop.indicial_polynomial(ldop.base_ring().gen())
-        order = max(dop.order(), ind.dispersion()) + 3
+    ldop = op.shift(mypoint)
     class Mapper(LocalBasisMapper):
         def fun(self, ini):
             return log_series(ini, self.shifted_bwrec, order)
     sols = Mapper(ldop).run()
     return [[(c / ZZ(k).factorial(),
-                point,
-                sol.leftmost + n,
-                k)
-                for n, vec in enumerate(sol.value)
-                for k, c in reversed(list(enumerate(vec)))]  # TODO if c != 0
+              point,
+              sol.leftmost + n,
+              k)
+             for n, vec in enumerate(sol.value)
+             for k, c in reversed(list(enumerate(vec)))
+             if c != 0]
             for sol in sols]
 
 
@@ -52,42 +49,61 @@ def compute_initial_decomp(op, first_coefficients):
     with first coefficients `first_coefficients` in the local basis in 0,
     as calculated by local_basis_expansions.
     '''
-    def my_local_monomials(op, point):
-        dop = DifferentialOperator(op)
-        struct = Point(point, dop).local_basis_structure()
-        x = SR(dop.base_ring().gen()) - point
-        return [(
-                    1 / sol.log_power.factorial(),
-                    simplify_exponent(sol.valuation),
-                    sol.log_power)
-                for sol in struct]
-
+    distinguished_monomials = Point(0, op).local_basis_structure()
     proj = [0] * op.order()
-    for i, (alpha, n, k) in enumerate(my_local_monomials(op, 0)):
-        if k == 0 and n >= 0:
-            proj[i] = first_coefficients[n]
+    for i, sol in enumerate(distinguished_monomials):
+        n, k = simplify_exponent(sol.valuation), sol.log_power
+        if n >= 0 and k == 0:
+            try:
+                proj[i] = first_coefficients[n]
+            except IndexError:
+                raise Exception('Not enough first coefficients supplied')
     return proj
 
 
-def handle_monomial(zeta, alpha, k, order):
+def handle_monomial(zeta, alpha, k, order, verbose, result_var):
     '''
     Compute an asymptotic expansion of the coefficients of
     (z-zeta)^alpha * (log (z-zeta))^k
     up to `order` terms.
     '''
+    corr = 2 * pi * I  #  * e^(alpha * corr)
     if k == 0:
-        return (-zeta)^alpha * asymptotic_expansions.SingularityAnalysis('n',
+        res = (-zeta)^alpha * simplify(asymptotic_expansions.SingularityAnalysis(result_var,
                                                 zeta=zeta,
                                                 alpha=-alpha,
-                                                precision=order)
-    return (-zeta)^alpha * sum(binomial(k, i) * log(-1/zeta)^(k-i) * asymptotic_expansions.SingularityAnalysis('n',
-                                                zeta=zeta,
-                                                alpha=-alpha,
-                                                beta=i,
-                                                precision=order) for i in range(1, k+1))
+                                                precision=order,
+                                                normalized=False))
+        if verbose:
+            print(f'1. got called with {zeta}, {alpha}, {k} and returned ', res)
+        return res
+    # print((log(-1/zeta))^(1-1))
+    # tmp_res = asymptotic_expansions.SingularityAnalysis(result_var,
+    #                                             zeta=zeta,
+    #                                             alpha=-alpha,
+    #                                             beta=k,
+    #                                             precision=order,
+    #                                             normalized=False)
+    # print('tmp res', tmp_res)
+    # print(dir(tmp_res))
+    # print(simplify_exponent(tmp_res))
+    # print(simplify(tmp_res))
+    res = (-1)^k * (
+            sum(binomial(k, i) * (log(-1/zeta))^(k-i) * simplify(asymptotic_expansions.SingularityAnalysis(result_var,
+                zeta=zeta,
+                alpha=-alpha,
+                beta=i,
+                precision=order,
+                normalized=False)) for i in range(1, k+1)))
+    if alpha not in NN:
+        res += (log(-1/zeta))^k
+    res *= (-zeta)^alpha
+    if verbose:
+        print(f'2. got called with {zeta}, {alpha}, {k} to order {order} and returned ', res)
+    return res
 
 
-def handle_root(op, root, ini, order, precision):
+def handle_root(op, root, ini, order, precision, verbose, result_var):
     '''
     Compute the contribution to asymptotic expansion of the coefficients f_n
     of a solution f to a given differential operator `op`, caracterized by
@@ -99,19 +115,40 @@ def handle_root(op, root, ini, order, precision):
                                                   assume_analytic=True)
     coeffs_in_local_basis = trans_matrix * vector(ini)
 
-    local_expansions = my_expansions(op, root, order=order)  # TODO eviter de refaire le calcul deja fait dans transition_matrix
+    local_expansions = my_expansions(op, root, order=order + 3)  # TODO eviter de refaire le calcul deja fait dans transition_matrix
+    if verbose:
+        print('basis in', root, ':', op.local_basis_expansions(root, order))
+        print('coeffs in local basis', coeffs_in_local_basis)
 
-    return [lambda_i * c * handle_monomial(root, alpha, m, order)  # reduce order when not necessary
-                     for lambda_i, expansion in zip(coeffs_in_local_basis, local_expansions)
-                     for (c, _, alpha, m) in expansion
-                     if c != 0 and (alpha not in NN or m > 0)]
+    res = []
+    found_a_sing = False
+    for lambda_i, expansion in zip(coeffs_in_local_basis, local_expansions):
+        for i, (c, _, alpha, m) in enumerate(expansion[:order]):
+            if alpha not in NN or m > 0:
+                found_a_sing = True
+                res.append(lambda_i * c * handle_monomial(root,
+                                                       alpha,
+                                                       m,
+                                                       order - i + 1,
+                                                       verbose,
+                                                       result_var))
+            else:
+                res.append(0)
+        if order < len(expansion):
+            _, _, alpha, m = expansion[order]
+            last_term_expansion = handle_monomial(root, alpha, m, 0, verbose, result_var)
+            res.append(last_term_expansion)
+    if verbose:
+        print('contribution in', root, ':', sum(res))
+    return res, found_a_sing
 
 
 def extract_asymptotics(op,
                         first_coefficients,
-                        z,
                         order=DEFAULT_ORDER,
-                        precision=DEFAULT_PRECISION):
+                        precision=DEFAULT_PRECISION,
+                        verbose=False,
+                        result_var='n'):
     '''
     Compute an asymptotic expansion of a solution to the differential operator `op`
     specified by its first coefficients `first_coefficients`, with
@@ -121,11 +158,17 @@ def extract_asymptotics(op,
     `order` controls the order of the expansion.
     `precision` controls the disired amount of certified precision for the constants.
     '''
+    op = DifferentialOperator(op)
+    z = op.base_ring().gen()
     ini = compute_initial_decomp(op, first_coefficients)
+    if verbose:
+        print('decomp in 0:', ini)
+        print('basis in 0:', op.local_basis_expansions(0))
     leading_roots = op.leading_coefficient().roots(QQbar)
     # TODO check 0 is reg or sing reg ?
 
     all_monomials = []
+    can_stop = False
     for module, roots in group_by_module(leading_roots):
         if module == 0:
             continue
@@ -133,8 +176,12 @@ def extract_asymptotics(op,
         for root, multiplicity in roots:
             if not is_regular_singular_point(root, multiplicity, z, op):
                     raise ValueError('Got an irregular singular point. Stopping here')
-            all_monomials += handle_root(op, root, ini, order, precision)
+            contribution, found_a_sing = handle_root(op, root, ini, order, precision, verbose, result_var)
+            can_stop = can_stop or found_a_sing
+            all_monomials.extend(contribution)
 
-        if all_monomials:
-            return sum(all_monomials)
+        if can_stop:
+            break
+    if all_monomials:
+        return sum(all_monomials)
     raise ValueError('No singularity was found')
