@@ -118,6 +118,77 @@ We give here a list of functions, along with an associated differential operator
 \end{center}
 \end{tiny}
 
+Here is the return of a typical call to \py{tests.sage} (slightly formatted and with few digits for convenience):
+
+\begin{minted}[frame=lines, tabsize=4, fontsize=\tiny]{shell}
+·> sage tests.sage
+log(1+z) -> [-1.00000*n^(-1)*(e^(I*arg(-1)))^n + O(n^(-3)*(e^(I*arg(-1)))^n)]
+
+log(1-z) -> [([-1.00000 +/- 1e-10])*n^(-1) + O(n^(-3))]
+
+1/(1-z) -> [1.00000]
+
+1/(1+z) -> [1.00000*(e^(I*arg(-1)))^n]
+
+1/(1 - z^2) -> [[0.500000 +/- 4.77e-7] + [0.500000 +/- 4.77e-7]*(e^(I*arg(-1)))^n + O(n^(-4)) + O(n^(-4)*(e^(I*arg(-1)))^n)]
+
+1/(1-z) * log(1/(1-z)) (H_n) -> [([1.00000 +/- 1e-10] + [+/- 5.17e-26]*I)*log(n)
+									+ ([1.00000 +/- 1e-10] + [+/- 5.17e-26]*I)*euler_gamma
+									+ ([-1.00000 +/- 1e-10] + [+/- 5.17e-26]*I)*log(-1)
+									+ [+/- 1.63e-25] + [3.14159 +/- 3.94e-6]*I
+									+ ([0.500000 +/- 1e-11]
+									+ [+/- 2.59e-26]*I)*n^(-1)
+									+ O(n^(-2))]
+
+z/(1-2z) -> [[0.500000 +/- 4.77e-7]*2^n]
+
+Arctan -> [([+/- 5.57e-15] + [-0.500000 +/- 4.77e-7]*I)*n^(-1)*(e^(I*arg(1*I)))^n
+			+ ([+/- 5.57e-15] + [0.500000 +/- 4.77e-7]*I)*n^(-1)*(e^(I*arg(-1*I)))^n
+			+ O(n^(-3)*(e^(I*arg(-1*I)))^n) + O(n^(-3)*(e^(I*arg(1*I)))^n)]
+
+random walks in Z*N -> [(([2.00000 +/- 1.91e-6])/sqrt(pi))*4^n*n^(-1/2)
+						+ (([-1.25000 +/- 2.51e-6])/sqrt(pi))*4^n*n^(-3/2)
+						+ (([1.14062 +/- 7.34e-6])/sqrt(pi))*4^n*n^(-5/2)
+						+ (([-1.1230 +/- 5.61e-5])/sqrt(pi))*4^n*n^(-7/2)
+						+ O(4^n*n^(-9/2))]
+
+random walks in N^2 -> [([1.27324 +/- 1.98e-6] + [+/- 1.57e-7]*I)*4^n*n^(-1)
+						+ ([-1.90986 +/- 2.96e-6] + [+/- 2.35e-7]*I)*4^n*n^(-2)
+						+ ([0.318310 +/- 7.23e-7])*4^n*n^(-3)*(e^(I*arg(-1)))^n
+						+ O(4^n*n^(-3))]
+
+Fibonacci numbers -> [[0.44721 +/- 4.20e-6]*1.618033988749895?^n + O(1.618033988749895?^n*n^(-5))]
+
+Catalan numbers -> [(([1.00000 +/- 9.54e-7])/sqrt(pi))*4^n*n^(-3/2)
+					+ (([-1.12500 +/- 4.00e-6])/sqrt(pi))*4^n*n^(-5/2)
+					+ (([1.1328 +/- 2.16e-5])/sqrt(pi))*4^n*n^(-7/2)
+					+ (([-1.1279 +/- 9.19e-5])/sqrt(pi))*4^n*n^(-9/2)
+					+ O(4^n*n^(-5))]
+
+Motzkin numbers -> [(([0.86602 +/- 6.62e-6])/sqrt(pi))*3^n*n^(-3/2)
+					+ (([-0.81190 +/- 6.64e-6])/sqrt(pi))*3^n*n^(-5/2)
+					+ (([0.8542 +/- 2.92e-5])/sqrt(pi))*3^n*n^(-7/2)
+					+ (([-0.855 +/- 3.66e-4])/sqrt(pi))*3^n*n^(-9/2)
+					+ O(3^n*n^(-5))]
+
+(1-z)^(3/2) -> [0.750000/sqrt(pi)*n^(-5/2)
+				+ 1.40625/sqrt(pi)*n^(-7/2)
+				+ (([2.25586 +/- 6.25e-7])/sqrt(pi))*n^(-9/2)
+				+ (([3.46069 +/- 3.36e-6])/sqrt(pi))*n^(-11/2)
+				+ (([5.22901 +/- 1.54e-6])/sqrt(pi))*n^(-13/2)
+				+ O(n^(-15/2))]
+
+z(1-z) -> No singularity was found
+
+(z - 1)^3 -> No singularity was found
+
+1-z -> No singularity was found
+
+exp(z) -> No singularity was found
+
+sin(z) -> No singularity was found
+\end{minted}
+
 %A l'ordre 6 et 7:
 %random walks in quadrant : ([1.27324 +/- 1.98e-6] + [+/- 1.57e-7]*I)*4^n*n^(-1) + ([-1.90986 +/- 2.96e-6] + [+/- 2.35e-7]*I)*4^n*n^(-2) + ([0.318310 +/- 7.23e-7])*4^n*n^(-3)*(e^(I*arg(-1)))^n + ([3.0239 +/- 5.09e-5] + [+/- 8.42e-7]*I)*4^n*n^(-3) + ([-1.4324 +/- 1.84e-5])*4^n*n^(-4)*(e^(I*arg(-1)))^n + O(4^n*n^(-4))
 %git:(master) 
@@ -129,7 +200,16 @@ We give here a list of functions, along with an associated differential operator
 
 
 \section{Performance}\label{section_implem_perf}
-TODO
+
+
+\begin{remark}
+	The following tests were only carried out through simple tools (\py{time} module from python, by averaging multiple calls, on my laptop with several other programs open, etc). Although the results seem in accordance with intuition and with the time spent on less expensive tests, one should keep in my they only give a vague idea of real performance.
+	
+	In particular, I did not attempt to compute the ``real'' complexity.
+\end{remark}
+
+On my laptop, it takes in average 14 seconds to compute the expansion for Motzkin numbers, with \py{order=20} and \py{precision=10^(-100)}. Computing up to \py{precision=10^(-10000)} takes about 16 seconds.
+\py{order=10} and \py{precision=10^(-100)} -> 13 seconds
 
 
 

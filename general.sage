@@ -1,5 +1,4 @@
 from ore_algebra import OreAlgebra
-
 from ore_algebra.analytic.differential_operator import DifferentialOperator
 from ore_algebra.analytic.local_solutions import (log_series, LocalBasisMapper,
                                                   simplify_exponent, LogMonomial)
@@ -11,13 +10,16 @@ from utils import group_by_module
 DEFAULT_PRECISION = 1e-53
 DEFAULT_ORDER = 5
 
+SA = asymptotic_expansions.SingularityAnalysis
 
-def is_regular_singular_point(point, leading_mult, z, op):
+
+def is_regular_singular_point(point, leading_mult, op):
     '''
     Checks weather a point is a regular singular point of a differential operator.
     `leading_mult` is the multiplicity of `point` as a root
     of the leading coefficient of `op`.
     '''
+    z = op.base_ring().gen()
     r = op.order()
     for i, poly in enumerate(op):
         if r - i < leading_mult \
@@ -26,7 +28,20 @@ def is_regular_singular_point(point, leading_mult, z, op):
     return True
 
 
+def check_0_is_regular_singular_point(op, leading_roots):
+    if any(root == 0 for root, mult in leading_roots):
+        mult_of_zero = next(mult for root, mult in leading_roots if root == 0)
+        if not is_regular_singular_point(0, mult_of_zero, op):
+            raise ValueError('Got an irregular singular point (0). Stopping here')
+
+
 def my_expansions(op, point, order):
+    '''
+    Compute the local basis expansion of `op` in the neighbourhood of `point`.
+    Same job as the "real" local_basis_expansions functions, but returns
+    a list of coefficients and powers, instead of a FormalSum, since these
+    are not easily manipulated.
+    '''
     mypoint = Point(point, op)
     ldop = op.shift(mypoint)
     class Mapper(LocalBasisMapper):
@@ -61,45 +76,34 @@ def compute_initial_decomp(op, first_coefficients):
     return proj
 
 
-def handle_monomial(zeta, alpha, k, order, verbose, result_var):
+def handle_monomial(zeta, alpha, k, order, verbose, result_var, precision):
     '''
     Compute an asymptotic expansion of the coefficients of
     (z-zeta)^alpha * (log (z-zeta))^k
     up to `order` terms.
     '''
-    corr = 2 * pi * I  #  * e^(alpha * corr)
     if k == 0:
-        res = (-zeta)^alpha * simplify(asymptotic_expansions.SingularityAnalysis(result_var,
-                                                zeta=zeta,
-                                                alpha=-alpha,
-                                                precision=order,
-                                                normalized=False))
+        res = (-zeta)^alpha * SA(result_var,
+                                 zeta=zeta,
+                                 alpha=-alpha,
+                                 precision=order,
+                                 normalized=False)
         if verbose:
-            print(f'1. got called with {zeta}, {alpha}, {k} and returned ', res)
+            print(f'1. got called with zeta={zeta}, alpha={alpha}, and returned ', res)
         return res
-    # print((log(-1/zeta))^(1-1))
-    # tmp_res = asymptotic_expansions.SingularityAnalysis(result_var,
-    #                                             zeta=zeta,
-    #                                             alpha=-alpha,
-    #                                             beta=k,
-    #                                             precision=order,
-    #                                             normalized=False)
-    # print('tmp res', tmp_res)
-    # print(dir(tmp_res))
-    # print(simplify_exponent(tmp_res))
-    # print(simplify(tmp_res))
-    res = (-1)^k * (
-            sum(binomial(k, i) * (log(-1/zeta))^(k-i) * simplify(asymptotic_expansions.SingularityAnalysis(result_var,
-                zeta=zeta,
-                alpha=-alpha,
-                beta=i,
-                precision=order,
-                normalized=False)) for i in range(1, k+1)))
+
+    res = (-1)^k * sum(binomial(k, i) * (log(-1/zeta))^(k-i) * SA(result_var,
+                                                                  zeta=zeta,
+                                                                  alpha=-alpha,
+                                                                  beta=i,
+                                                                  precision=order,
+                                                                  normalized=False)
+                        for i in range(1, k+1))
     if alpha not in NN:
-        res += (log(-1/zeta))^k
+        res += (log(-1/zeta))^k * handle_monomial(zeta, alpha, 0, order, verbose, result_var, precision)
     res *= (-zeta)^alpha
     if verbose:
-        print(f'2. got called with {zeta}, {alpha}, {k} to order {order} and returned ', res)
+        print(f'2. got called with zeta={zeta}, alpha={alpha}, k={k} to order {order} and returned ', res)
     return res
 
 
@@ -115,31 +119,40 @@ def handle_root(op, root, ini, order, precision, verbose, result_var):
                                                   assume_analytic=True)
     coeffs_in_local_basis = trans_matrix * vector(ini)
 
-    local_expansions = my_expansions(op, root, order=order + 3)  # TODO eviter de refaire le calcul deja fait dans transition_matrix
+    local_expansions = my_expansions(op, root, order=order + 3)
     if verbose:
-        print('basis in', root, ':', op.local_basis_expansions(root, order))
+        print('basis in', root, ':', op.local_basis_expansions(root, order + 3))
         print('coeffs in local basis', coeffs_in_local_basis)
+        print('local expansions', local_expansions)
 
     res = []
     found_a_sing = False
     for lambda_i, expansion in zip(coeffs_in_local_basis, local_expansions):
         for i, (c, _, alpha, m) in enumerate(expansion[:order]):
             if alpha not in NN or m > 0:
-                found_a_sing = True
+
+                if alpha not in QQ:
+                    raise ValueError('Got an irrational value for alpha')
+
+                if lambda_i.is_nonzero():
+                    found_a_sing = True
                 res.append(lambda_i * c * handle_monomial(root,
-                                                       alpha,
-                                                       m,
-                                                       order - i + 1,
-                                                       verbose,
-                                                       result_var))
+                                                          alpha,
+                                                          m,
+                                                          order - i + 1,
+                                                          verbose,
+                                                          result_var,
+                                                          precision))
             else:
                 res.append(0)
+
         if order < len(expansion):
             _, _, alpha, m = expansion[order]
-            last_term_expansion = handle_monomial(root, alpha, m, 0, verbose, result_var)
+            last_term_expansion = handle_monomial(root, alpha, m, 0, verbose, result_var, precision)
             res.append(last_term_expansion)
-    if verbose:
-        print('contribution in', root, ':', sum(res))
+    
+    if verbose: print('contribution in', root, ':', sum(res))
+    
     return res, found_a_sing
 
 
@@ -160,28 +173,37 @@ def extract_asymptotics(op,
     '''
     op = DifferentialOperator(op)
     z = op.base_ring().gen()
+
+    leading_roots = op.leading_coefficient().roots(QQbar)
+    
+    check_0_is_regular_singular_point(op, leading_roots)
+
     ini = compute_initial_decomp(op, first_coefficients)
     if verbose:
-        print('decomp in 0:', ini)
         print('basis in 0:', op.local_basis_expansions(0))
-    leading_roots = op.leading_coefficient().roots(QQbar)
-    # TODO check 0 is reg or sing reg ?
+        print('decomp in 0:', ini)
 
-    all_monomials = []
+    all_monomials_by_modulus = []
     can_stop = False
     for module, roots in group_by_module(leading_roots):
         if module == 0:
             continue
 
+        monomials = []
         for root, multiplicity in roots:
-            if not is_regular_singular_point(root, multiplicity, z, op):
-                    raise ValueError('Got an irregular singular point. Stopping here')
+            if not is_regular_singular_point(root, multiplicity, op):
+                    raise ValueError(f'Got an irregular singular point ({root}). Stopping here')
             contribution, found_a_sing = handle_root(op, root, ini, order, precision, verbose, result_var)
             can_stop = can_stop or found_a_sing
-            all_monomials.extend(contribution)
+            monomials.extend(contribution)
+
+        if verbose: print('found a sing:', found_a_sing)
+
+        all_monomials_by_modulus.append(sum(monomials))
 
         if can_stop:
             break
-    if all_monomials:
-        return sum(all_monomials)
+
+    if any(monomials for monomials in all_monomials_by_modulus):
+        return (all_monomials_by_modulus)
     raise ValueError('No singularity was found')
