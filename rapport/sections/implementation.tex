@@ -4,40 +4,145 @@
 
 \chapter{Implementation}
 
-Section \ref{section_implem_structure} presents the global structure of the algorithm, then details some parts. Section \ref{section_implem_tests} briefly presents the tests. Finally, section \ref{section_implem_perf} discusses performance aspects.
+First, section \ref{section_limitations} briefly discusses known limitations of the current program. Then section \ref{section_implem_structure} presents most parts of the algorithm, section \ref{section_implem_tests} briefly presents the tests. Finally, section \ref{section_implem_perf} discusses performance aspects.
 
-\section{Structure}\label{section_implem_structure}
+\section{Limitations}\label{section_limitations}
 
-We first present here the main algorithm, and the important sub-algorithms. The implementation is mostly transparent, except for a few optimizations like computing the local solutions in 0 only once.
+The current version can not handle entire functions, nor functions with only a singularity in 0.
 
-\begin{algorithm}[H]
-	\caption{Main algorithm}
-	\SetAlgoLined
-	\KwIn{$f$ defined by a $a_n \frac{d^n}{dz^n}f + \dots a_0 = 0$, initial coefficients~$f_0, \dots, f_n$, order and precision}
-	\KwOut{Asymptotic expansion of $f$ with at least order terms, and coefficients with given precision}
+Due to the way \py{SageMath} implements numbers, it can not handle the case of irrational solutions to the polynomial equations. This is the only known limitation that restricts us further apart the general results of the maths chapter.
+
+\section{Problems and solutions}\label{section_implem_structure}
+
+\paragraph{Computing the roots of $p_r$}
+When \py{op} represents the differential operator associated to $p_r f^(r) + \dots + p_0$, we call \py{op.leading_coefficient().roots(QQbar)} to compute the roots of $p_r$. This function returns a list of tuples \py{(root, multiplicity)}. Internally, a root is an algebraic number. \py{Sage} deals with algebraic numbers by remembering the polynomial they come from, and a sufficiently precise approximation.
+
+\paragraph{Asserting a point is singular regular}
+A root $\rho$ of $p_r$ has to be regular or singular regular for our analysis to be valid. We therefore implement a simple function to assert each encountered root is a regular singular point.
+ 
+\begin{pyblock}[fontsize=\tiny]
+def assert_point_is_regular_singular(point, leading_mult, op):
+	z, r = op.base_ring().gen(), op.order()
+	for i, poly in enumerate(op):
+		if r - i < leading_mult \
+		       and not ((z - point)^(leading_mult - (r - i))).divides(poly):
+			raise ValueError(f'Got an irregular singular point ({point}).')
+\end{pyblock}
+
+\paragraph{Computing the decomposition of $f$ in 0}
+To compute the decomposition of $f$ in 0, we make use of the \py{local_basis_structure} function, which computes the ``distinguished monomial'' associated to each solution in the local basis. Each of these monomials, in the form $z^n \log(z)^k$, characterizes the solution it belongs to, so we only have to fetch its coefficient in the Taylor coefficients of $f$.
+
+\begin{pyblock}
+def compute_initial_decomp(op, first_coefficients):
+	distinguished_monomials = Point(0, op).local_basis_structure()
+	proj = [0] * op.order()
+	for i, sol in enumerate(distinguished_monomials):
+		n, k = simplify_exponent(sol.valuation), sol.log_power
+		if n in NN and n >= 0 and k == 0:
+			try:
+				proj[i] = first_coefficients[n]
+			except IndexError:
+				raise Exception('Not enough first coefficients supplied')
+	return proj
+\end{pyblock}
+
+\paragraph{Computing a local basis of solutions (\py{my_expansions})}
+The computation of a local basis of solutions is achieved by calling \py{my_expansions}. This function is a re-implementation of \py{local_basis_expansions}, modified to make its return easily usable (as opposed to the symbolic expression normally returned by \py{local_basis_expansions}, nice when printed but rather intricate).
+
+Both make use of \py{LocalBasisMapper}, also implemented in \py{ore_algebra}, which is mostly an generator for the local basis terms.
+
+\begin{pyblock}[fontsize=\tiny]
+def my_expansions(op, point, order):
+	mypoint = Point(point, op)
+	ldop = op.shift(mypoint)
+	class Mapper(LocalBasisMapper):
+		def fun(self, ini):
+			return log_series(ini, self.shifted_bwrec, order)
+	sols = Mapper(ldop).run()
+	return [[(c / ZZ(k).factorial(),
+					point,
+					sol.leftmost + n,
+					k)
+				for n, vec in enumerate(sol.value)
+				for k, c in reversed(list(enumerate(vec)))
+				if c != 0]
+			for sol in sols]
+\end{pyblock}
+
+\paragraph{Computing the decomposition of $f$ in $\rho \neq 0$}
+Assumming $\rho$ is a regular or regular singular point, the function \py{numerical_transition_matrix} computes the transition matrix $\mathcal{B}_{0 \to \rho}$ between 0 and $\rho$ with a prescribed precision.
+
+The computation of the decomposition $v_\rho$ of $f$ in $\rho$ is now achieved by multiplying $\mathcal{B}_{0 \to \rho}$ and $v_0$ (vector of coordinates of $f$ in 0).
+
+\begin{pyblock}
+trans_matrix = op.numerical_transition_matrix([0, root],
+											  eps=precision,
+											  assume_analytic=True)
+coeffs_in_local_basis = trans_matrix * vector(ini)  # `ini` is v_0
+\end{pyblock}
+
+
+\paragraph{Computing the contribution of a term}
+
+The contribution of a term $${(z - \zeta)}^a {(\log (z - \zeta))}^b$$ is computed using \py{SingularityAnalysis}. But this function considers functions in a slightly different form: $${\left(\frac{1}{1 - z/\zeta}\right)}^\alpha {\left(\log \frac{1}{1 - z/\zeta}\right)}^\beta$$
+It is therefore necessary to perform a little transformation:
+\begin{align*}
+	{(z - \zeta)}^a {(\log (z - \zeta))}^b &= {((-\zeta)(1 - z/\zeta))}^a {(\log ((-\zeta)(1 - z/\zeta)))}^b \\
+										   &= {(-\zeta)}^\alpha {(1 - z/\zeta)}^a {\left(\log (-\zeta) + \log (1 - z/\zeta)\right)}^b\\
+										   &= {(-\zeta)}^\alpha {\left(\frac{1}{1 - z/\zeta}\right)}^{-a}
+										   			\psum{i = 0}^b {b \choose i} (\log (-\zeta))^{b-i} {\left(-\log \frac{1}{1 - z/\zeta}\right)}^i
+\end{align*}
+
+(We are justified to perform transformations like $(xy)^t = x^t y^t$ since this expression only has to be valid in a $\Delta$-domain)
+
+Note that ${(-\zeta)}^\alpha {\left(\frac{1}{1 - z/\zeta}\right)}^{-a} (\log (-\zeta))^b$ has a non-zero contribution if and only if $a \not\in \mathbb{N}$.
+
+\begin{pyblock}
+def handle_monomial(zeta, alpha, k, order, verbose, result_var, precision):
+	if k == 0:
+		return (-zeta)^alpha * SA(result_var, zeta=zeta, alpha=-alpha,
+								  precision=order, normalized=False)
 	
-	\Begin{
-		
-		Compute the roots of $a_n$ and group them by increasing module.
-		
-		Initialise the sum $S$ of contributions to the asymptotic expansion.
-		
-		\While{No contribution confirmed}{
-			Load next group G of roots
-			
-			\ForEach{root $\rho \in$ G}{
-				Compute the contribution of $\rho$.	
-			}
-			
-			Sum contributions of G and add to $S$
-		}
-		
-		\KwRet{S}
-	}
-	
-\end{algorithm}
+	res = (-1)^k * sum(binomial(k, i) * \
+						(log(-1/zeta))^(k-i) * SA(result_var,
+												  zeta=zeta,
+												  alpha=-alpha,
+												  beta=i,
+												  precision=order,
+												  normalized=False)
+					   for i in range(1, k+1))
+	if alpha not in NN:
+		res += (log(-1/zeta))^k * handle_monomial(zeta, alpha, 0,
+												  order, verbose,
+												  result_var, precision)
+	return res * (-zeta)^alpha
+\end{pyblock}
 
-To compute the contribution of a specific root, we use the following algorithm
+\begin{remark}
+	\py{SingularityAnalysis} returns an expression, possibly with a $O$ term. This expression behaves as one would expect; in particular, when summing two of these expressions, the big Os ``absorb'' the asymptotically inferior terms.
+\end{remark}
+
+\paragraph{Compute a $O$ for the contribution of the remaining terms}
+
+If the expression of $f$ in the local basis has only a small number of terms (say, less than \py{order}), one only needs to perform singularity analysis on each term.
+
+Assume the expression of $f$ in the local basis was ``truncated'' when performing singularity analysis:
+$$f(z) = \psum{i=0}^p {(z-\zeta)}^{a_i} {\log (z-\zeta)}^{b_i} + O \left( {(z-\zeta)}^\alpha {\log (z-\zeta)}^\beta \right)$$
+By theorem \ref{thm_transfer} it suffices to compute a singularity analysis to order 0 on $({(z-\zeta)}^\alpha {\log (z-\zeta)}^\beta$ and add it to the previously computed contributions.
+
+\begin{pyblock}
+if order < len(expansion):
+	_, _, alpha, m = expansion[order]
+	if alpha not in NN or m > 0:
+		last_term_expansion = handle_monomial(root, alpha, m, 0, verbose,
+											  result_var, precision)
+		res.append(last_term_expansion)
+\end{pyblock}
+
+
+\paragraph{Computing the contribution of a root}
+
+To compute the contribution of a specific root $\rho$, we use the following algorithm (the corresponding \py{handle_root} function is not reproduced here for obvious length reasons)
 
 \begin{algorithm}[H]
 	\caption{Computing the contribution of a root}
@@ -46,26 +151,33 @@ To compute the contribution of a specific root, we use the following algorithm
 	\KwOut{Contribution of $\rho$ to the asymptotic expansion of $f$}
 	
 	\Begin{
-		Compute a basis $\mathcal{B}_0$ of solutions in 0, and decompose $f$ in $\mathcal{B}_0$.
+		Decompose $f$ in $\mathcal{B}_\rho$.
 		
-		Compute a basis $\mathcal{B}_\rho$ of solutions in $\rho$, and decompose $f$ in $\mathcal{B}_\rho$.
+		Initialize a sum $S$ of terms contributions.
 		
-		Initialize a sum S of terms contributions.
-		
-		\ForEach{term T in the local expansions}{
-			Compute an asymptotic expansion of the Taylor coefficients of T.
+		\ForEach{term $T$ in the local expansions}{
+			Compute an asymptotic expansion of the Taylor coefficients of $T$.
 			
-			Add to S.
+			Add to $S$.
+		}
+		\If{local expansion was truncated}{
+			Compute a $O$ for the contribution of the remaining terms.
+			
+			Add to $S$
 		}
 	}
 	\KwRet{S}
 \end{algorithm}
 
 
-
-
 \section{Tests}\label{section_implem_tests}
 
+A list of tests lies in \py{tests.sage}. Tests are separated into different testing strategies : first, a somewhat long list of simple and classical sequences are tested. Then, some possible cases of failure (no singularity, apparent singularity, irregular singular points) are tested through specially chosen examples.
+
+The only non-passing test is a test where the program encounters an irrational number as root of the indicial polynomial.
+
+
+\subsection*{Classical sequences}\label{subsection_classical_sequences}
 We give here a list of functions, along with an associated differential operator and an asymptotic expansion. We provide a name when the Taylor series is of combinatorial interest, and a reference for the not obvious/classical cases.
 
 %\begin{landscape}
@@ -120,7 +232,7 @@ We give here a list of functions, along with an associated differential operator
 
 Here is the return of a typical call to \py{tests.sage} (slightly formatted and with few digits for convenience):
 
-\begin{minted}[frame=lines, tabsize=4, fontsize=\tiny]{shell}
+\begin{minted}[frame=lines, tabsize=4, fontsize=\scriptsize]{shell}
 ·> sage tests.sage
 log(1+z) -> [-1.00000*n^(-1)*(e^(I*arg(-1)))^n + O(n^(-3)*(e^(I*arg(-1)))^n)]
 
@@ -130,7 +242,8 @@ log(1-z) -> [([-1.00000 +/- 1e-10])*n^(-1) + O(n^(-3))]
 
 1/(1+z) -> [1.00000*(e^(I*arg(-1)))^n]
 
-1/(1 - z^2) -> [[0.500000 +/- 4.77e-7] + [0.500000 +/- 4.77e-7]*(e^(I*arg(-1)))^n + O(n^(-4)) + O(n^(-4)*(e^(I*arg(-1)))^n)]
+1/(1 - z^2) -> [[0.500000 +/- 4.77e-7] + [0.500000 +/- 4.77e-7]*(e^(I*arg(-1)))^n
+				+ O(n^(-4)) + O(n^(-4)*(e^(I*arg(-1)))^n)]
 
 1/(1-z) * log(1/(1-z)) (H_n) -> [([1.00000 +/- 1e-10] + [+/- 5.17e-26]*I)*log(n)
 									+ ([1.00000 +/- 1e-10] + [+/- 5.17e-26]*I)*euler_gamma
@@ -180,36 +293,21 @@ Motzkin numbers -> [(([0.86602 +/- 6.62e-6])/sqrt(pi))*3^n*n^(-3/2)
 
 z(1-z) -> No singularity was found
 
-(z - 1)^3 -> No singularity was found
-
-1-z -> No singularity was found
-
 exp(z) -> No singularity was found
 
 sin(z) -> No singularity was found
 \end{minted}
 
-%A l'ordre 6 et 7:
-%random walks in quadrant : ([1.27324 +/- 1.98e-6] + [+/- 1.57e-7]*I)*4^n*n^(-1) + ([-1.90986 +/- 2.96e-6] + [+/- 2.35e-7]*I)*4^n*n^(-2) + ([0.318310 +/- 7.23e-7])*4^n*n^(-3)*(e^(I*arg(-1)))^n + ([3.0239 +/- 5.09e-5] + [+/- 8.42e-7]*I)*4^n*n^(-3) + ([-1.4324 +/- 1.84e-5])*4^n*n^(-4)*(e^(I*arg(-1)))^n + O(4^n*n^(-4))
-%git:(master) 
-%seb@seb-HP-EliteBook-820-G2:pts/0->/home/seb/Dropbox/M2 fonda/mezzarobba/depot_git (0)
-%·> sage tests.sage
-%
-%random walks in quadrant : ([1.27324 +/- 1.98e-6] + [+/- 1.57e-7]*I)*4^n*n^(-1) + ([-1.90986 +/- 2.96e-6] + [+/- 2.35e-7]*I)*4^n*n^(-2) + ([0.318310 +/- 7.23e-7])*4^n*n^(-3)*(e^(I*arg(-1)))^n + ([3.0239 +/- 5.09e-5] + [+/- 8.42e-7]*I)*4^n*n^(-3) + ([-1.4324 +/- 1.84e-5])*4^n*n^(-4)*(e^(I*arg(-1)))^n + ([-5.0134 +/- 7.11e-5] + [+/- 4.26e-6]*I)*4^n*n^(-4) + O(4^n*n^(-5)*log(n))
-%git:(master) 
-
-
 \section{Performance}\label{section_implem_perf}
 
 
 \begin{remark}
-	The following tests were only carried out through simple tools (\py{time} module from python, by averaging multiple calls, on my laptop with several other programs open, etc). Although the results seem in accordance with intuition and with the time spent on less expensive tests, one should keep in my they only give a vague idea of real performance.
+	The following tests were only carried out through simple tools (\py{time} module from python, by averaging multiple calls, on my laptop with several other programs open, etc). Although the results seem in accordance with intuition and with the time spent on less expensive tests, one should keep in mind they only give a vague idea of real performance.
 	
 	In particular, I did not attempt to compute the ``real'' complexity.
 \end{remark}
 
-On my laptop, it takes in average 14 seconds to compute the expansion for Motzkin numbers, with \py{order=20} and \py{precision=10^(-100)}. Computing up to \py{precision=10^(-10000)} takes about 16 seconds.
-\py{order=10} and \py{precision=10^(-100)} -> 13 seconds
+On my laptop, it takes in average 14 seconds to compute the expansion for Motzkin numbers, with \py{order=20} and \py{precision=10^(-100)}. Computing up to \py{precision=10^(-10000)} takes about 16 seconds. Reducing to \py{order=10} and \py{precision=10^(-100)} takes about 13 seconds, and \py{order=4} and \py{precision=10^(-100)} ``only'' 11 seconds.
 
 
 

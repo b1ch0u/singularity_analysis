@@ -13,7 +13,7 @@ DEFAULT_ORDER = 5
 SA = asymptotic_expansions.SingularityAnalysis
 
 
-def is_regular_singular_point(point, leading_mult, op):
+def assert_point_is_regular_singular(point, leading_mult, op):
     '''
     Checks weather a point is a regular singular point of a differential operator.
     `leading_mult` is the multiplicity of `point` as a root
@@ -24,15 +24,13 @@ def is_regular_singular_point(point, leading_mult, op):
     for i, poly in enumerate(op):
         if r - i < leading_mult \
                 and not ((z - point)^(leading_mult - (r - i))).divides(poly):
-            return False
-    return True
+            raise ValueError(f'Got an irregular singular point ({point}).')
 
 
 def check_0_is_regular_singular_point(op, leading_roots):
-    if any(root == 0 for root, mult in leading_roots):
+    if any(root == 0 for root, _ in leading_roots):
         mult_of_zero = next(mult for root, mult in leading_roots if root == 0)
-        if not is_regular_singular_point(0, mult_of_zero, op):
-            raise ValueError('Got an irregular singular point (0). Stopping here')
+        assert_point_is_regular_singular(0, mult_of_zero, op)
 
 
 def my_expansions(op, point, order):
@@ -65,10 +63,11 @@ def compute_initial_decomp(op, first_coefficients):
     as calculated by local_basis_expansions.
     '''
     distinguished_monomials = Point(0, op).local_basis_structure()
+
     proj = [0] * op.order()
     for i, sol in enumerate(distinguished_monomials):
         n, k = simplify_exponent(sol.valuation), sol.log_power
-        if n >= 0 and k == 0:
+        if n in NN and n >= 0 and k == 0:
             try:
                 proj[i] = first_coefficients[n]
             except IndexError:
@@ -148,8 +147,9 @@ def handle_root(op, root, ini, order, precision, verbose, result_var):
 
         if order < len(expansion):
             _, _, alpha, m = expansion[order]
-            last_term_expansion = handle_monomial(root, alpha, m, 0, verbose, result_var, precision)
-            res.append(last_term_expansion)
+            if alpha not in NN or m > 0:
+                last_term_expansion = handle_monomial(root, alpha, m, 0, verbose, result_var, precision)
+                res.append(last_term_expansion)
     
     if verbose: print('contribution in', root, ':', sum(res))
     
@@ -175,7 +175,7 @@ def extract_asymptotics(op,
     z = op.base_ring().gen()
 
     leading_roots = op.leading_coefficient().roots(QQbar)
-    
+
     check_0_is_regular_singular_point(op, leading_roots)
 
     ini = compute_initial_decomp(op, first_coefficients)
@@ -191,8 +191,8 @@ def extract_asymptotics(op,
 
         monomials = []
         for root, multiplicity in roots:
-            if not is_regular_singular_point(root, multiplicity, op):
-                    raise ValueError(f'Got an irregular singular point ({root}). Stopping here')
+            assert_point_is_regular_singular(root, multiplicity, op)
+
             contribution, found_a_sing = handle_root(op, root, ini, order, precision, verbose, result_var)
             can_stop = can_stop or found_a_sing
             monomials.extend(contribution)

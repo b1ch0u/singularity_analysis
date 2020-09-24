@@ -4,16 +4,18 @@
 
 \chapter{Conclusion}
 
-The goal of this internship was to produce a piece of code, able to take in a function $f$, in the form of a differential equation of which $f$ is solution, and the first Taylor coefficients of $f$ in 0, and return an asymptotic expansion of $f$ up to any desired order, with explicit constants also computed with certified digits up to any desired precision. That goal is achieved, as various tests indicate.
+The goal of this internship was to produce a piece of code, able to compute an asymptotic expansion for the Taylor coefficients of a D-Finite function. It had to take in a function~$\sum f_n z^n$, in the form of a differential equation and the first values of $f_n$, and return an asymptotic expansion of $f_n$, up to any desired order and precision.
+
+That goal is achieved, as various tests indicate. The code runs in seconds, even for 20 terms and far too many certified digits.
 
 Although many steps involved had already been implemented in \verb|Sagemath|, no function was available to perform the full analysis.
-Therefore, Marc and I intend to submit the code for acceptance to \py{ore_algebra}.
+Therefore, Marc and I intend to submit the code for acceptance to \py{ore_algebra}, after a few corner cases fixes and refactoring steps.
 
 For the future, possible improvements include handling singularities in 0, entire series, and computing explicit bounds on the error made by the computed asymptotic expansion.
 
 \section*{Acknowledgement}
 
-I wish to express here my gratitude towards Marc Mezzarobba for his trust and availability. This internship was only carried out to a term thanks to his constant attention and availability.
+I wish to express here my gratitude towards Marc for his trust and availability. This internship was only carried out to a term thanks to his constant attention and availability.
 
 In a time of great uncertainty about my future, and despite the challenges of an entirely remote internship, it was always a pleasure to work under his benevolent guidance.
 

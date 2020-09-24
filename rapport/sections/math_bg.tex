@@ -7,7 +7,7 @@
 \section{Notations}
 
 \begin{definition}{}
-	Let $f$ be a differentiable function. We note $f^{(k)}$ its $k$-th derivative.
+	Let $f$ be a holomorphic function. We note $f^{(k)}$ its $k$-th derivative, and $[z^k]f(z)$ its $(k+1)$th Taylor coefficient.
 \end{definition}
 
 %\begin{definition}{{Open balls, closed balls, circles}}
@@ -32,59 +32,67 @@
 
 \section{Reminders from complex analysis}
 
+We only recall the Cauchy coefficients formula, as it is essential to our work.
+
 %In all this section, $\Omega$ is an open subset of $\mathbb{C}$.
+%
+%\begin{thm}{Leibniz rule}\label{Leibniz_rule}
+%	\[
+%	{(fg)}^{(n)} = \psum{i=0}^{n} {n \choose i} f^{(n - i)} g^{(i)}
+%	\]
+%\end{thm}
+%
+%\begin{definition}{Analytic functions}
+%	A function $f$ is said to be \emph{analytic} on $\Omega$ if, for all $z_0 \in \Omega$, it admits an expansion
+%	\[
+%	f(z) = \psum{n \geq 0} f_n {(z - z_0)}^n
+%	\]
+%	that converges on some neighbourhood of $z_0$.
+%\end{definition}
+%
+%\begin{thm}{Cauchy's integral formula}\label{thm_cauchy_integral}
+%	Let $\Omega$ be an open subset of $\mathbb{C}$.
+%	
+%	Let $\omega \in \Omega$ and $\rho > 0$ such that
+%	$\mathcal{B}_f (\omega, \rho) \subset \Omega$.
+%	
+%	Let $f$ be holomorphic on $\Omega$.
+%	
+%	Then for all $z_0 \in \mathcal{B} (\omega, \rho)$, we have
+%	\begin{equation*}
+%		f(z_0) = \frac{1}{2 i \pi} \int_{\mathcal{S} (\omega, r)} \frac{f(z)}{z - z_0} dz
+%	\end{equation*}
+%\end{thm}
 
-\begin{thm}{Leibniz rule}\label{Leibniz_rule}
-	\[
-	{(fg)}^{(n)} = \psum{i=0}^{n} {n \choose i} f^{(n - i)} g^{(i)}
-	\]
-\end{thm}
-
-\begin{definition}{Analytic functions}
-	A function $f$ is said to be \emph{analytic} on $\Omega$ if, for all $z_0 \in \Omega$, it admits an expansion
-	\[
-	f(z) = \psum{n \geq 0} f_n {(z - z_0)}^n
-	\]
-	that converges on some neighbourhood of $z_0$.
+\begin{definition}{{Closed disk, circle}}
+	Let $r > 0$ and $z \in \mathbb{C}$. We denote $\mathcal{D} (z_0, r)$ the closed disk of center $z_0$ and radius $r$, and $\mathcal{C} (z_0, r)$ its frontier.
 \end{definition}
 
-\begin{thm}{Cauchy's integral formula}\label{thm_cauchy_integral}
-	Let $\Omega$ be an open subset of $\mathbb{C}$.
-	
-	Let $\omega \in \Omega$ and $\rho > 0$ such that
-	$\mathcal{B}_f (\omega, \rho) \subset \Omega$.
-	
-	Let $f$ be holomorphic on $\Omega$.
-	
-	Then for all $z_0 \in \mathcal{B} (\omega, \rho)$, we have
-	\begin{equation*}
-		f(z_0) = \frac{1}{2 i \pi} \int_{\mathcal{S} (\omega, r)} \frac{f(z)}{z - z_0} dz
-	\end{equation*}
-\end{thm}
+\begin{thm}{Cauchy's coefficient formula}\label{thm_cauchy_coefficients}
+	Let $f$ be analytic on some neighbourhood $\Omega$ of $z_0 \in \mathbb{C}$, and $r > 0$ such that $\mathcal{D} (z_0, r) \subset \Omega$.
 
-\begin{cor}{Cauchy's coefficient formula}\label{thm_cauchy_coefficients}
-	Let $f$ be analytic on some neighbourhood $\Omega$ of $z_0 \in \mathbb{C}$, and $r > 0$ such that $\mathcal{B}_f (z_0, r) \subset \Omega$, then for all $n$, one has
+	Then for all $n$, one has
 	\[
 	f_n = \frac{1}{2i\pi} \int_{\mathcal{C} (z_0, r)}
 	\frac{f(z)}{{(z - z_0)}^{n+1}} dz
 	\]
-\end{cor}
-
-\begin{thm}{}
-	Let $f$ be analytic in some neighbourhood $\Omega$ of $z_0 \in \mathbb{C}$, and $f_n$ such that on $\Omega$ one can write
-	$$
-	f(z) = \psum{n \geq 0} f_n {(z - z_0)}^n
-	$$
-	then for all $n$, we have
-	$$
-	f_n = \frac{f^{(n)}(z_0)}{n!}
-	$$
 \end{thm}
 
+%\begin{thm}{}
+%	Let $f$ be analytic in some neighbourhood $\Omega$ of $z_0 \in \mathbb{C}$, and $f_n$ such that on $\Omega$ one can write
+%	$$
+%	f(z) = \psum{n \geq 0} f_n {(z - z_0)}^n
+%	$$
+%	then for all $n$, we have
+%	$$
+%	f_n = \frac{f^{(n)}(z_0)}{n!}
+%	$$
+%\end{thm}
+%
 
-TODO
 
-\subsection{Complex logarithm}
+
+\subsection*{Complex logarithm}
 
 \paragraph{A few identities}
 
@@ -114,7 +122,7 @@ From now on, except when explicitly stated otherwise, $\log z$ and $\arg z$ will
 	\end{align*}
 \end{remark}
 
-\begin{prop}{}
+\begin{thm}{}
 	Let $a, b, c \in \mathbb{C}^*$. Then
 	\begin{align*}
 		\log (a b) &= \log a + \log b + 2 i \pi N_+ (a, b)\\
@@ -122,7 +130,7 @@ From now on, except when explicitly stated otherwise, $\log z$ and $\arg z$ will
 		{(a b)}^c &= a^c \times b^c \times e^{2i\pi c N_+(a, b)}\\
 		{\left(\frac{a}{b}\right)}^c &= \frac{a^c}{b^c} e^{2i\pi c N_-(a, b)}
 	\end{align*}
-\end{prop}
+\end{thm}
 
 \begin{cor}{}\label{cor_log_identities}
 	Let $x \in \mathbb{R}^{+*}$ and $z,t \in \mathbb{C}^*$. Then $\arg(x) = 0$, so all classical identities over the real numbers extend identically:
@@ -154,6 +162,36 @@ From now on, except when explicitly stated otherwise, $\log z$ and $\arg z$ will
 %\end{thm}
 %
 %% TODO : Parler d'algèbres de Ore ?
+
+
+\section{Asymptotic expansions and scales}
+
+\begin{definition}{Asymptotic scale $(\phi_n)$}
+	Let $z_0 \in \mathbb{C}$.
+	
+	Let $(\phi_n)$ be a sequence of functions, continuous in $z_0$.
+	
+	We say that $(\phi_n)$ is an \emph{asymptotic scale} if, for every $n$, we have
+	\[
+	\phi_{n + 1}(z) = o(\phi_n(z))
+	\]
+	as $z$ tends to $z_0$
+\end{definition}
+
+\begin{definition}{Asymptotic expansion}
+	Let $(\phi_n)$ be an asymptotic scale in a neighbourhood of $z_0$ and $N \in \mathbb{N}$.
+	
+	If we have
+	\[
+	f(z) = \psum{n = 0}^{N-1} a_n \phi_n(z) + O(\phi_N(z))
+	\]
+	as $z$ tends to $z_0$, then we say that $f$ admits an \emph{asymptotic expansion} of order $N$ around $z_0$.
+	
+	When this expression is valid for all $N$, we note
+	$$
+	f \sim \sum a_n \phi_n
+	$$
+\end{definition}
 
 \subfile{sections/basics_eq_diff}
 
@@ -221,7 +259,7 @@ From now on, except when explicitly stated otherwise, $\log z$ and $\arg z$ will
 
 For further treatment of this section, one is referred to \cite{Wasow1965} (chapter II in particular).
 
-\subsection{Another transformation}
+\subsection*{Another transformation}
 
 Let $\zeta \in \mathbb{C}$, $y$ such that
 
@@ -235,30 +273,43 @@ y(z)\\
 {(z - \zeta)}^{r - 1} y^{(r - 1)}(z)
 \end{pmatrix}$ (that is, $Y_i : z \mapsto {(z - \zeta)}^{i - 1} y^{(i - 1)}(z)$).
 
-For all $i \leq r - 1$, we have $${(z - \zeta)} Y_i' = (i-1)Y_i + Y_{i + 1}$$ and
-$$ {(z - \zeta)} Y	_r' = (r - 1)Y_r - {(z - \zeta)} a_{r-1} Y_{r - 1} - \dots - {(z - \zeta)}^r a_0 Y_1 $$
+For all $i \leq r - 1$, we have $${(z - \zeta)} Y_i'(z) = (i-1)Y_i(z) + Y_{i + 1}(z)$$ and
+$$ {(z - \zeta)} Y_r'(z) = (r - 1)Y_r(z) - {(z - \zeta)} a_{r-1}(z) Y_{r - 1}(z) - \dots - {(z - \zeta)}^r a_0(z) Y_1(z) $$
 
-Then, equation \eqref{basic_eq_diff} is equivalent to
+Then, equation \eqref{eqn_central} is equivalent to
 
 \begin{equation}\label{eq_diff_matrix_form}
 {(z - \zeta)}Y' = A_\zeta(z)Y
 \end{equation}
 
-where $A_\zeta(z)$ is an $r \times r$ matrix.
+where $A_\zeta(z)$ is an $r \times r$ matrix
+\begin{equation*}
+A_\zeta(z)=
+\begin{pmatrix}
+0&1&&&\\
+&1&1&\mbox{\Huge 0}\\
+\mbox{\Huge 0}  & \ddots & \ddots  & &\\
+ &  & r-1 & 1\\
+-a_0(z){(z(\zeta))}^r & \dots & -a_{r-1}(z)(z(\zeta)) & r - 1
+\end{pmatrix}
+\end{equation*}
 
-\subsection{Regular singular points and indicial polynomials}
+\subsection*{Regular singular points and indicial polynomials}
 
 
 \begin{definition}{Regular singular points}
-	Consider a differential equation (E) of the form \eqref{basic_eq_diff}.
+	Consider a differential equation (E)
+	\begin{equation}
+	y^{(r)} + \frac{p_{r-1}}{p_r} y^{(r - 1)} + \dots + \frac{p_0}{p_r} y = 0
+	\end{equation}
 	
-	We say that $\zeta$ is a \emph{regular singular} point of (E), and $\zeta$ is a pole of $\frac{p_i}{p_r}$ of order at most $r - i$, for all $i \in [0, r - 1]$.
+	We say that $\zeta$ is a \emph{regular singular} point of (E), if $\zeta$ is a pole of $\frac{p_i}{p_r}$ of order at most $r - i$, for all $i \in [0, r - 1]$.
 	
 	Equivalently, $\zeta$ is a regular singular point if $A_\zeta(z)$ is analytic in some neighbourhood of $\zeta$, when one writes $(z - \zeta)Y' = A_\zeta(z) Y$.
 \end{definition}
 
 \begin{definition}{{Indicial polynomial, $I_\zeta$}}
-	The characteristic polynomial of $A_\zeta(\zeta)$ is named the \emph{indicial polynomial} of equation \eqref{basic_eq_diff} and \eqref{eq_diff_matrix_form} at $\zeta$, denoted $I_\zeta$.
+	The characteristic polynomial of $A_\zeta(\zeta)$ is called the \emph{indicial polynomial} of equation \eqref{eqn_central} and \eqref{eq_diff_matrix_form} at $\zeta$, denoted $I_\zeta$.
 \end{definition}
 
 %Before defining indicial polynomials in all generality, let us begin with a simple example, allowing one to get a grasp at where the definition comes from.
@@ -298,11 +349,11 @@ where $A_\zeta(z)$ is an $r \times r$ matrix.
 %	\end{align*}
 %\end{exmpl}
 
-\subsection{Results}
+\subsection*{Results}
 
 
 \begin{thm}{General structure theorem}
-	Let $\zeta$ be a regular singular point of \eqref{basic_eq_diff}. No assumption is made on the roots of $I_\zeta$.
+	Let $\zeta$ be a regular singular point of \eqref{eqn_central}. No assumption is made on the roots of $I_\zeta$.
 	
 	Then, in a slit neighbourhood of $\zeta$, there exists a basis of solutions of the form
 	\begin{equation}\label{general_structure_form}
@@ -311,7 +362,7 @@ where $A_\zeta(z)$ is an $r \times r$ matrix.
 	where $\theta_j$ are the roots of the indicial polynomial, each $H_j$ is analytic at 0, and $m \in \mathbb{N}$. 
 \end{thm}
 
-\subsection{Special cases}
+\subsection*{Special cases}
 
 \begin{definition}{G-functions}
 	A formal series $f = \sum f_n z^n \in \mathbb{Q}[[z]]$ is called a \emph{G-function} if it is D-finite and there exists $C > 0$ such that for all $n$, we have

@@ -13,20 +13,29 @@ def test_is_regular_singular_point():
     Diff.<Dz> = OreAlgebra(Pols)
 
     op = (4*z^2 - z) * Dz^2 + (14 * z - 2) * Dz + 6
-    assert is_regular_singular_point(0, 1, z, op)
-    assert is_regular_singular_point(1/4, 1, z, op)
+    assert_point_is_regular_singular(0, 1, op)
+    assert_point_is_regular_singular(1/4, 1, op)
 
     op2 = (4*z^3 - z^2) * Dz^2 + (14 * z - 2) * Dz + 6
-    assert not is_regular_singular_point(0, 2, z, op2)
-    assert is_regular_singular_point(1/4, 1, z, op2)
+    try:
+        assert_point_is_regular_singular(0, 2, op2)
+        raise Exception('assert_point_is_regular_singular failed to recognize irregular singular point')
+    except ValueError: pass
+    assert_point_is_regular_singular(1/4, 1, op2)
 
     op3 = (z)^4 * (z-1)^5 * Dz^3 + (z^2) * (z - 1) * Dz
-    assert is_regular_singular_point(0, 4, z, op3)
-    assert not is_regular_singular_point(1, 5, z, op3)
+    assert_point_is_regular_singular(0, 4, op3)
+    try:
+        assert_point_is_regular_singular(1, 5, op3)
+        raise Exception('assert_point_is_regular_singular failed to recognize irregular singular point')
+    except ValueError: pass
 
     op4 = (z-1/4)^8 * (z-1/5)^12 * Dz^9 + (z - 1/4)^4 * Dz^5 + 1
-    assert is_regular_singular_point(1/4, 8, z, op4)
-    assert not is_regular_singular_point(1/5, 12, z, op4)
+    assert_point_is_regular_singular(1/4, 8, op4)
+    try:
+        assert_point_is_regular_singular(1/5, 12, op4)
+        raise Exception('assert_point_is_regular_singular failed to recognize irregular singular point')
+    except ValueError: pass
 
 
 def test_extract_asymptotics():
@@ -83,11 +92,14 @@ def test_extract_asymptotics():
         op = (1 - z - z^2) * Dz^2 - (2 + 4*z) * Dz - 2
         print('\nFibonacci numbers ->', my_extract(op, [0, 1, 1, 2, 3, 5]))
 
-        op = (4*z^2 - z)*Dz^2+(10*z-2)*Dz+2
+        op = (4*z^2 - z)*Dz^2 + (10*z - 2)*Dz + 2
         print('\nCatalan numbers ->', my_extract(op, [1, 1, 2, 5, 14]))
 
         op = (3*z^4 + 2*z^3 - z^2)*Dz^2 + (6*z^3 + 3*z^2 - z)*Dz + 1
-        print('\nMotzkin numbers ->', my_extract(op, [1, 1, 2, 4, 9, 21, 51, 127], order=4))
+        print('\nMotzkin numbers ->', my_extract(op, [1, 1, 2, 4, 9, 21, 51, 127]))
+
+        op = 5*z^2*(2*z-1)*(z-3)*Dz^4 + 2*z*(59*z^2-139*z+36)*Dz^3+6*(61*z^2-80*z+6)*Dz^2+12*(25*z-11)*Dz+36
+        print('\nExmpl p 72 of Melczer20 ->', my_extract(op, [2, 1]))
 
     def apparent_sing_tests():
         print('\nTesting functions with an apparent singularity')
@@ -111,7 +123,7 @@ def test_extract_asymptotics():
         print('\n10^(-10)/(z-1) + 1/(z-2) (precision 1e-20) ->', my_extract(op, first_coefficients, precision=1e-20))
 
     def no_sing_tests():
-        print('\nTesting functions with no singularity, except maybe in 0.')
+        print('\nTesting functions with no singularity')
 
         op = (z^2-z)*Dz-(2*z-1)
         print('z(1-z) ->', my_extract(op, [0, 1, -1]))

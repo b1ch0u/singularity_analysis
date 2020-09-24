@@ -4,36 +4,44 @@
 
 \chapter{Introduction}
 
-
 Pick your favourite combinatorial construction. Let $a_n$ the number of such structures of size $n$. We wish to be able to compute an asymptotic expansion of $a_n$ automatically.
 
-Let $f = \sum a_n z^n$ be the complex series associated to $(a_n)$.
+Let $f = \sum a_n z^n$ be the formal series associated to $(a_n)$.
 
-We shall see that, if $f$ has a positive convergence radius, then one has asymptotically $a_n = A^n \theta(n)$ where $\theta$ has sub-exponential growth.
-Two principles, stated in \cite{Flajolet2009}, shall guide one's search :
+We shall see that if $f$, as a complex series, has a positive convergence radius, then one has asymptotically $a_n = A^n \theta(n)$ where $\theta$ has sub-exponential growth.
+Two principles, stated in \cite{Flajolet2009}, shall guide our search :
 
 \begin{itemize}
 	\item	\emph{First Principle of Coefficient Asymptotics} : The location of a function’s
 			singularities dictates the exponential growth ($A^n$) of its coefficients.
 	
 	\item	\emph{Second Principle of Coefficient Asymptotics} : The nature of a function’s
-			singularities determines the associate subexponential factor ($\theta(n)$).
-	
+			singularities determines the associate subexponential factor $\theta(n)$.
 \end{itemize}
 %Almost everything that we present here is, to some degree, borrowed from \cite{Flajolet2009}. Flajolet and Sedgewick amply describe these techniques, along with many examples.
 
-\section{State of the art}
+From these principles, one can now infer how the method works : first compute the possible locations for singularities, then determine the behaviour of $f$ around each singularity, and finally "translate" these results to an asymptotic expansion of $a_n$.
 
-%It has been known since TODO that 
+\paragraph{Holonomic functions}
 
-In 1990, Flajolet and Odlyzko \cite{FlajoletOdlyzko1990} proved transfer theorems, that allow one to 
-TODO %TODO
+In many combinatorial situations, one does not have a closed formula for $f$. In such cases, it is however often possible to determine a differential equation of which $f$ is a solution. When the coefficients of that differential equation are polynomials, one says that $f$ is \emph{holonomic}, or \emph{D-finite}.
 
+Many usual functions are D-finite: polynomials, rational fractions, the exponential, logarithm, and trigonometric functions, etc. Moreover, the class of D-finite functions is closed under sum, product, derivation (cf. \cite{Melczer2020}).
+
+If one could come up with an algorithm to compute asymptotic expansions for all holonomic functions, one would therefore be able to give precise estimates for various combinatorial sequences. Such an algorithm is not yet reachable, though. It is indeed currently unknown how to handle the case of $f$ having an essential singularity.
+
+Nonetheless, assuming $f$ behaves nicely, the way is clear now.
+
+\paragraph{Certified digits}
+
+The current process of determining an asymptotic expansion of $(f_n)$ involves decomposing $f$ in different bases. Obtaining a closed formula for the associated \emph{connection coefficients} is a hard problem (cf, for instance, \cite{Melczer2020} for a small discussion on this topic). One can grasp this complexity through the fact that these connection coefficients can, in general, be transcendental numbers.
+
+The situation is not hopeless, yet. It is possible to compute these coefficients up to arbitrary precision, and it so happens that Mezzarobba wrote a function in \py{ore_algebra} to this end (\cite{mezzarobba2106}).
 
 \section{Mathematical sketch}
 
 \paragraph{From a combinatorial problem to a differential equation}
-Powerful techniques exist to translate a combinatorial construction into a \emph{D-finite} relation, namely a differential equation with polynomial coefficients.
+Powerful techniques exist to translate a combinatorial construction into a \emph{D-finite} relation.
 We will not cover those techniques here. If interested, one is referred to \cite{Flajolet2009}.
 
 From now on, we will assume that a non trivial D-finite relation satisfied by $f$ is given, which is a relation of the form
@@ -47,18 +55,21 @@ where $p_0, \dots, p_r \in \mathbb{C}[X]$.
 \end{definition}
 
 \paragraph*{Singularities location}
-We will first see that $f$ may only have singularities at roots of $p_r$. Thereafter, we define $\Xi := \{ \text{roots of } p_r\}$. If $f$ has at least one singularity, minimal ones (by module) are called \emph{dominant singularities}.
+We will first see that $f$ may only have singularities at roots of $p_r$. Thereafter, we define $\Xi := \{ \text{roots of } p_r\}$. If $f$ has at least one non-zero singularity, minimal ones (by modulus) are called \emph{dominant singularities}.
 
 \paragraph*{Local basis structure theorems}
-Following the definition of \emph{regular singular points}, where some technical condition is satisfied, it can be proved that, in a \emph{slit} neighbourhood of any such point $\zeta$, equation \eqref{basic_eq_diff} admits a local basis of solutions of the form $${(z - \zeta)}^{\theta_j} \log^m (z - \zeta) H_j (z - \zeta)$$ with $H_j$ analytic at 0. This basis can be explicitly computed. 
+Following the definition of \emph{regular singular points}, where some technical condition is satisfied, it can be proved that, in a \emph{slit} neighbourhood of any such point $\zeta$, equation \eqref{basic_eq_diff} admits a local basis of solutions of the form $${(z - \zeta)}^{\theta_j} \log^m (z - \zeta) H_j (z - \zeta)$$ with $H_j$ analytic at 0. The first terms of this basis can be explicitly computed, and the associated coefficients for $f$ can be numerically approximated, up to any desired precision.
+
+\paragraph*{Singularity Analysis}
+Each term ${(z - \zeta)}^\alpha \log^m$ in the previous basis expansion contributes to the asymptotics of $f_n$. We provide explicit formulas for this ``translation''.
 
 \paragraph*{Transfer theorems}
-We then investigate \emph{transfer theorems}. Assume $f$ has at least one singularity, and  all dominant singularities are regular singular points. After expressing $f$ in the previous form around all dominant singularities, transfer theorems allow one to compute an asymptotic expansion of $f_n$.
+We finally investigate \emph{transfer theorems}, allowing one to account for the non-translated terms in the local-basis.
 
 
 \section{Implementation overview}
 
-The implementation is in SageMath, mostly (and vastly) relying on the \verb|ore_algebra| and \verb|AsymptoticRing| modules.
+The implementation is in SageMath, and vastly relies on the \verb|ore_algebra| and \verb|AsymptoticRing| modules.
 
 \paragraph{\py{extract_asymptotics}}
 
@@ -67,9 +78,10 @@ A function \py{extract_asymptotics} is implemented, with the following definitio
 \begin{pyblock}
 def extract_asymptotics(op,
 						first_coefficients,
-						z,
 						order=DEFAULT_ORDER,
-						precision=DEFAULT_PRECISION) -> expr
+						precision=DEFAULT_PRECISION,
+						verbose=False,
+						result_var='n') -> expr
 \end{pyblock}
 
 For a holonomic function $f$, \py{extract_asymptotics} takes
@@ -79,23 +91,114 @@ For a holonomic function $f$, \py{extract_asymptotics} takes
 	
 	\item A list \py{first_coefficients} of the first Taylor coefficients of $f$
 	
-	\item The variable \py{z} used in definition of \py{op}, only for technical reasons
-	
 	\item The desired \py{order} of the asymptotic expansion
 	
 	\item The desired certified \py{precision} for the constants
+	
+	\item A boolean \py{verbose}. When \py{True}, major step computations will be printed to the user.
+	
+	\item A string \py{result_var} to control the variable name in the result expression.
 \end{itemize}
 
-It returns an asymptotic expansion of the coefficients of $f$, up to the desired \py{order} and with constants certified at least with the given \py{precision}.
+It returns a list of asymptotic expansions of the coefficients of $f$, up to the desired \py{order} and with constants certified at least with the given \py{precision}, ordered by root modulus.
+
+Here is a sample execution for the Catalan numbers:
+
+\begin{minted}[frame=lines, tabsize=4, fontsize=\scriptsize]{shell}
+sage: op = extract_asymptotics((4*z^2 - z)*Dz^2 + (10*z - 2)*Dz + 2, [1, 1, 2, 5, 14], order=5, precision=1e-10)
+[(([1.0000000000 +/- 7.28e-12])/sqrt(pi))*4^n*n^(-3/2)
++ (([-1.1250000000 +/- 3.05e-11])/sqrt(pi))*4^n*n^(-5/2)
++ (([1.1328125000 +/- 6.92e-11])/sqrt(pi))*4^n*n^(-7/2)
++ (([-1.127929688 +/- 8.58e-10])/sqrt(pi))*4^n*n^(-9/2)
++ (([1.12728882 +/- 3.67e-9])/sqrt(pi))*4^n*n^(-11/2)
++ O(4^n*n^(-6))]
+\end{minted}
 
 \paragraph{Global structure}
 
-We first locate the roots of $p_r$, and group them by increasing module.
+We first locate the roots of $p_r$, and group them by increasing modulus.
 
 Then, as long as no root has been \textit{proved} to be a singularity of $f$, we iterate through the groups and sum their contributions. A root of $p_r$ can indeed not always be proved to be a singularity of $f$ only by computing the coefficients of $f$ in the local basis: if one of these coefficients is precisely 0, successive approximations will never be able to distinguish it from 0, yet not proving either that it would be nil.
 
-Then for each root, we make use of \py{local_basis_expansions}, defined in the \py{ore_algebra} module. That function allows one to compute a local basis of solutions to \py{op}, along with their expansion up to any desired order. A call to \py{numerical_transition_matrix} then allows us to determine the expression of $f$ in that local basis, with constants certified to the desired \py{precision}.
+Then for each root, we make use of (a personal version of) \py{local_basis_expansions}. That function allows us to compute a local basis of solutions to \py{op}, along with their generating series expansion up to any desired order. A call to \py{numerical_transition_matrix} then allows us to determine the expression of $f$ in that local basis, with certified constants.
 
-Calling \py{SingularityAnalysis} (a specially crafted function from the \py{asymptotic_ring} module) on each term appearing and summing the results finally yields the desired expansion.
+Each term should then be transferred to \py{SingularityAnalysis} (from the \py{asymptotic_ring} module). Summing the results finally yields the desired expansion.
+
+The process can be summarized as follows
+
+\begin{algorithm}[H]
+	\caption{Main algorithm}
+	\SetAlgoLined
+	\KwIn{$f$ defined by a $a_n \frac{d^n}{dz^n}f + \dots a_0 = 0$, initial coefficients~$f_0, \dots, f_n$, order and precision}
+	\KwOut{Asymptotic expansion of $f$ with at least order terms, and coefficients with given precision}
+	
+	\Begin{
+		Compute the roots of $a_n$ and group them by increasing modulus.
+		
+		Initialise a list $L$ of contributions to the asymptotic expansion.
+		
+		\While{No contribution confirmed}{
+			Load next group $G$ of roots
+			
+			\ForEach{root $\rho \in G$}{
+				Compute the contribution of $\rho$.	
+			}
+			
+			Sum contributions of $G$ and add to $L$
+		}
+		
+		\KwRet{$L$}
+	}
+\end{algorithm}
+
+
+\section{State of the art}
+
+From the theoretical point of view, the method that we implement is now quite well established and understood. It has cousins, in particular the Birkhoff-Trjitznisky method, which is intended for P-recursive sequences.
+
+\subsection*{Theory}
+
+\paragraph{About D-finite functions}
+Most considerations on D-finite functions, such as the singularities possible locations and the structure theorems, are known for quite a time now. They are already described in Poole's book \emph{Introduction to the Theory of Linear Differential Equations} (\cite{Poole1936}) in 1936.
+
+A crucial paper is \emph{Sur les séries de Taylor n’ayant que des singularités algébrico-logarithmiques sur leur cercle de convergence} (\cite{Jungen1931}), where Junger explains how to compute explicit formulas for the asymptotic expansion of ${\left(\frac{1}{1 - z/\zeta}\right)}^\alpha {\left( \log \frac{1}{1 - z/\zeta} \right)}^\beta$ when $\beta$ is an integer (which, for us, will always be true).
+
+Another fundamental paper for our considerations is \emph{Singularity Analysis of Generating Functions}, where Flajolet and Odlyzko \cite{FlajoletOdlyzko1990} prove the transfer theorem.
+
+The books \emph{Analytic Combinatorics} \cite{Flajolet2009} by Flajolet and Sedgewick, and \emph{An Invitation to Analytic Combinatorics} \cite{Melczer2020} by Stephen Melczer proved extremely useful as sources of pedagogy and examples.
+
+This internship also heavily relied on the computation of certified connection coefficients, described in \emph{Rigorous Multiple-Precision Evaluation of D-Finite Functions in SageMath} \cite{mezzarobba2106}, by Marc Mezzarobba.
+
+\paragraph{P-recursive sequences and the Birkhoff-Trjitznisky method}
+
+A sequence $(u_n)$ is said P-recursive if it satisfies a recurrence equation with polynomial coefficients:
+$$
+p_0(n) u_n + p_1(n) u_{n-1} + \dots + p_r u_{n-r} = 0
+$$
+
+It is a classical fact that a sequence is P-recursive if and only if the associated formal series is D-finite (see, for instance \cite{Flajolet2009} or \cite{Melczer2020}).
+
+The Birkhoff-Trjitznisky method allows one to compute an asymptotic expansion of $u_n$, but the coefficients can only be heuristically estimated (no bound of correctness).
+
+\subsection*{Implementations}
+
+\paragraph{In Maple}
+The \py{Asyrec} package, written by Doron Zeilberger (see \href{https://sites.math.rutgers.edu/~zeilberg/mamarim/mamarimhtml/asy.html}{this} webpage), implements the Birkhoff-Trjitznisky method ; it therefore works with P-recursive sequences rather than D-finite functions, and the constants are only empirically estimated.
+
+The \py{gfun} package by Bruno Salvy \cite{salvyGFUN} allows one to perform various operations with differential operators and D-finite functions. It does not, however, offer methods for singularity analysis.
+
+The \py{gdev} package, also by Bruno Salvy \cite{Salvy1991ExamplesOA} performs singularity analysis on generating functions, given in closed form.
+
+\paragraph{In SageMath}
+
+The \py{ore_algebra} module (\href{https://github.com/mkauers/ore_algebra}{here}) by Manuel Kauers, Maximilian Jaroschek, and Fredrik Johansson, performs various tasks on differential operators (among other things), such as computing a local basis of solutions, approximate the expression of a solution in such a basis, etc.
+
+The \py{asymptotic_expansions} module offers a function \py{SingularityAnalysis} that computes an asymptotic expansion of the coefficients of a function in the specific form $${\left(\frac{1}{1 - z/\zeta}\right)}^\alpha {\left( \log \frac{1}{1 - z/\zeta} \right)}^\beta$$
+
+Me make intensive use of both these modules.
+
+\paragraph{Mathematica}
+
+The package \py{GeneratingFunctions} by Mallinger performs automatic manipulations and transformations of holonomic functions.
 
 \end{document}
